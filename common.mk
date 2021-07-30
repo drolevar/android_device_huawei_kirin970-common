@@ -54,7 +54,8 @@ PRODUCT_COPY_FILES += \
 # Init
 PRODUCT_PACKAGES += \
     fstab.kirin970 \
-    fstab.kirin970.ramdisk
+    fstab.kirin970.ramdisk \
+    init.recovery.kirin970.rc
 
 # Kernel
 PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := false
