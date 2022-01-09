@@ -36,8 +36,6 @@ on early-boot
     write /sys/block/dm-0/queue/read_ahead_kb 2048
 	chown system system /sys/block/sdd/queue/usr_ctrl
 
-    # Update dm-verity state and set partition.*.verified properties
-    verity_update_state
     # Support legacy paths
     symlink /sdcard /mnt/sdcard
     symlink /sdcard /storage/sdcard0
@@ -52,9 +50,6 @@ on early-boot
     chown system system /sys/class/irda/irda_chip/ir_chip_type
 
 on init
-    # Load persistent dm-verity state
-    verity_load_state
-
     #for cpuidle low power mode
     chown system system /sys/devices/system/cpu/cpuidle/lp_mode
     chmod 660 /sys/devices/system/cpu/cpuidle/lp_mode
@@ -412,14 +407,6 @@ on property:sys.boot_completed=1 && property:ro.vendor.user_hota_update=1
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 4294967295
     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 4294967295
 
-on property:ro.vendor.user_hota_update=1 && property:odm.thermal.hw_mc.hardware.upgrade_thermal_control=1
-    limit_soc_thermal_temperature /sys/class/thermal/thermal_zone0/trip_point_1_temp
-    write /dev/kmsg "first boot, user_hota_update = 1. change ipa control temp."
-
-on property:ro.vendor.user_hota_update=1 && property:odm.thermal.hw_mc.hardware.upgrade_thermal_control=1 && property:odm.thermal.hw_mc.hardware.upgrade_thermal_disable=1
-    restore_soc_thermal_temperature /sys/class/thermal/thermal_zone0/trip_point_1_temp
-    write /dev/kmsg "first boot, user_hota_update = 1. restore ipa control temp."
-
 on charger
     mount_all /vendor/etc/fstab.${ro.hardware}
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor schedutil
@@ -441,7 +428,6 @@ on fs
 
     mount_all /vendor/etc/fstab.${ro.hardware}
 
-    #mount_all_patch /patch_hw/fstab.patch_step1
     restorecon /splash2
     chmod 775 /splash2
     chown root system /splash2
@@ -558,8 +544,6 @@ on boot
 
     chown system system /sys/class/leds/lcd_backlight0/brightness
     chmod 644 /sys/class/leds/lcd_backlight0/brightness
-
-    chmod 755 /system/bin/busybox
 
 #pmic_record_log
     write /sys/kernel/pmic_mntn/pmic_exch 1
@@ -925,9 +909,6 @@ service shex /system/bin/shex -p
 
 on data_ready
     exec u:r:blkcginit:s0 root root -- /vendor/bin/sh /vendor/etc/blkcg_init.sh 0 0
-
-on property:sys.userstorage_block=1
-    trigger_erecovery 2015
 
 service datarply /vendor/bin/data_replay
     user system
