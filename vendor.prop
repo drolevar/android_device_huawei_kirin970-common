@@ -1,3 +1,6 @@
+# Adoptable Storage
+ro.crypto.volume.options=aes-256-xts
+
 # Bluetooth
 bluetooth.device.class_of_device=90,2,12
 bluetooth.profile.asha.central.enabled?=true
