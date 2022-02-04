@@ -99,6 +99,9 @@ TARGET_COPY_OUT_VENDOR := vendor
 # Platform
 TARGET_BOARD_PLATFORM := kirin970
 
+# Properties
+TARGET_PRODUCT_PROP += $(COMMON_PATH)/product.prop
+
 # Recovery
 TARGET_RECOVERY_FSTAB := $(COMMON_PATH)/init/fstab.kirin970
 TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
