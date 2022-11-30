@@ -1,5 +1,3 @@
-import  /vendor/etc/init/charger/init.chip.usb.rc
-
 on early-init
 
 on init
