@@ -38,7 +38,12 @@ blob_fixups: blob_fixups_user_type = {
        .regex_replace(
             r'(\n    capabilities BLOCK_SUSPEND NET_ADMIN NET_RAW)',
             r'\1\n    disabled',
-        )
+        ),
+    (
+        'vendor/lib64/hw/hwcomposer.kirin970.so',
+        'vendor/lib/hw/hwcomposer.kirin970.so',
+    ): blob_fixup()
+        .replace_needed('libui.so', 'libui-v29.so')
 }  # fmt: skip
 
 module = ExtractUtilsModule(
