@@ -29,6 +29,15 @@ blob_fixups: blob_fixups_user_type = {
             r'    interface android.hardware.biometrics.fingerprint@2.1::IBiometricsFingerprint default\n'
             r'    interface vendor.huawei.hardware.biometrics.fingerprint@2.1::IExtBiometricsFingerprint default\n'
             r'    interface vendor.huawei.hardware.biometrics.fingerprint@2.2::IExtBiometricsFingerprint default',
+        ),
+    'vendor/etc/init/rild.rc': blob_fixup()
+        .regex_replace(
+            r'(service vendor\.ril-daemon /vendor/bin/hw/rild)',
+            r'on property:sys.rilprops_ready=1\n    start vendor.ril-daemon\n\n\1',
+        )
+       .regex_replace(
+            r'(\n    capabilities BLOCK_SUSPEND NET_ADMIN NET_RAW)',
+            r'\1\n    disabled',
         )
 }  # fmt: skip
 
