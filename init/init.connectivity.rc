@@ -56,9 +56,3 @@ service iprenew_bnep0 /system/bin/dhcpcd -n
     class main
     disabled
     oneshot
-
-service macaddr /vendor/bin/mac_addr_normalization
-    class late_start
-    user root
-    group root bluetooth wifi system
-    oneshot
