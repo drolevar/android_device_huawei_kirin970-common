@@ -50,7 +50,40 @@ blob_fixups: blob_fixups_user_type = {
     ): blob_fixup()
         .replace_needed('libjsoncpp.so', 'libjsoncpp-v30.so'),
     'vendor/lib64/libSmartAE.so': blob_fixup()
-        .sig_replace('9F 02 0A B9', '1F 20 03 D5')
+        .sig_replace('9F 02 0A B9', '1F 20 03 D5'),
+    (
+        'vendor/lib64/libBestShot.so',
+        'vendor/lib64/libDocBeauty.so',
+        'vendor/lib64/libFNFD.so',
+        'vendor/lib64/libFNFFD.so',
+        'vendor/lib64/libFNFR.so',
+        'vendor/lib64/libFaceBeautyMeiwo.so',
+        'vendor/lib64/libHW_BShutter.so',
+        'vendor/lib64/libHW_BShutterRaw.so',
+        'vendor/lib64/libHwDocDetection.so',
+        'vendor/lib64/libLaserSelfCali.so',
+        'vendor/lib64/libOpenCLFoundation.so',
+        'vendor/lib64/libSR_opencl.so',
+        'vendor/lib64/libSmartAE.so',
+        'vendor/lib64/libVideoDenoise.so',
+        'vendor/lib64/libdcamera_disptodepth.so',
+        'vendor/lib64/libfairlight.so',
+        'vendor/lib64/libfairlight_ai.so',
+        'vendor/lib64/libfairlight_ipu.so',
+        'vendor/lib64/libhdr.so',
+        'vendor/lib64/libhiview.so',
+        'vendor/lib64/libimedia_filters.so',
+        'vendor/lib64/libipu.so',
+        'vendor/lib64/libmorpho_effect_library5.so',
+        'vendor/lib64/libmotionEstimation.so',
+        'vendor/lib64/libmrc_cg_ldc.so',
+        'vendor/lib64/libmrc_cg_niceFood.so',
+        'vendor/lib64/libmrc_cg_postprocess.so',
+        'vendor/lib64/librawhdr.so',
+        'vendor/lib64/libtrans_depth_code.so',
+        'vendor/lib64/libvenuscropimageface.so',
+    ): blob_fixup()
+        .replace_needed('libstdc++.so', 'libstdc++_vendor.so')
 }  # fmt: skip
 
 module = ExtractUtilsModule(
