@@ -56,6 +56,11 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.consumerir.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/android.hardware.consumerir.xml
 
 # Init
+$(call soong_config_set,libinit,vendor_init_lib,//hardware/huawei:init_hisi)
+
+PRODUCT_PACKAGES += \
+    hisi_init
+
 PRODUCT_PACKAGES += \
     fstab.kirin970 \
     fstab.kirin970.ramdisk \
