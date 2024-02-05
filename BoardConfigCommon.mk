@@ -29,7 +29,8 @@ BOARD_KERNEL_CMDLINE := \
     page_tracker=on \
     unmovable_isolate1=2:192M,3:224M,4:256M \
     printktimer=0xfff0a000,0x534,0x538 \
-    androidboot.init_fatal_reboot_target=recovery
+    androidboot.init_fatal_reboot_target=recovery \
+    androidboot.super_partition=super
 
 BOARD_KERNEL_BASE := 0x00078000
 BOARD_KERNEL_PAGESIZE := 2048
