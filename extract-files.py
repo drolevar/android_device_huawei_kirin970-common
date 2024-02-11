@@ -43,7 +43,9 @@ blob_fixups: blob_fixups_user_type = {
         'vendor/lib64/hw/hwcomposer.kirin970.so',
         'vendor/lib/hw/hwcomposer.kirin970.so',
     ): blob_fixup()
-        .replace_needed('libui.so', 'libui-v29.so')
+        .replace_needed('libui.so', 'libui-v29.so'),
+    'vendor/lib64/libSmartAE.so': blob_fixup()
+        .sig_replace('9F 02 0A B9', '1F 20 03 D5')
 }  # fmt: skip
 
 module = ExtractUtilsModule(
