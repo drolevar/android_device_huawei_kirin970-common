@@ -28,7 +28,8 @@ TARGET_NO_BOOTLOADER := true
 
 # HIDL
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
-    hardware/huawei/vintf/vendor_framework_compatibility_matrix.xml
+    hardware/huawei/vintf/vendor_framework_compatibility_matrix.xml \
+    vendor/lineage/config/device_framework_matrix.xml
 DEVICE_MATRIX_FILE := hardware/huawei/vintf/compatibility_matrix.xml
 
 # Kernel
