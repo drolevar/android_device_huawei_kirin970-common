@@ -76,10 +76,9 @@ Only the three quirks included above are recognized at this point:
 -->
 
 <MediaCodecs>
-    <Include href="media_codecs_google_audio.xml" />
-
     <Settings>
-    <Setting name="max-video-encoder-input-buffers" value="5" />
+        <Domain name="telephony" enabled="true" />
+        <Setting name="max-video-encoder-input-buffers" value="11" />
     </Settings>
     <Decoders>
         <MediaCodec name="OMX.hisi.video.decoder.avc" type="video/avc" >
@@ -256,7 +255,4 @@ Only the three quirks included above are recognized at this point:
         </MediaCodec>
 
     </Encoders>
-
-    <Include href="media_codecs_google_video.xml" />
-    <Include href="media_codecs_google_telephony.xml" />
 </MediaCodecs>
