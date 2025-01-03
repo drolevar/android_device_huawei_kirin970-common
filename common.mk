@@ -24,5 +24,8 @@ PRODUCT_SOONG_NAMESPACES += \
     bootable/deprecated-ota \
     hardware/huawei
 
+# Storage
+$(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
+
 # Inherit from the proprietary files makefile.
 $(call inherit-product, vendor/huawei/kirin970-common/kirin970-common-vendor.mk)
