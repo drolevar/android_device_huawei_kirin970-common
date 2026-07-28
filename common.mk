@@ -59,7 +59,22 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     fstab.kirin970 \
     fstab.kirin970.ramdisk \
-    init.recovery.kirin970.rc
+    fstab.modem \
+    init.audio.rc \
+    init.balong_modem.rc \
+    init.connectivity.rc \
+    init.device.rc \
+    init.hisi.rc \
+    init.hisi.usb.rc \
+    init.kirin970.rc \
+    init.manufacture.rc \
+    init.performance.rc \
+    init.platform.rc \
+    init.post-fs-data.rc \
+    init.recovery.kirin970.rc \
+    init.tee.rc \
+    init.vowifi.rc \
+    ueventd.kirin970.rc
 
 # Kernel
 PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := false

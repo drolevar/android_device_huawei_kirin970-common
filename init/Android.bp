@@ -11,8 +11,113 @@ prebuilt_etc {
 }
 
 prebuilt_etc {
+    name: "fstab.modem",
+    src: "fstab.modem",
+    vendor: true,
+    ramdisk_available: true,
+}
+
+prebuilt_etc {
     name: "init.recovery.kirin970.rc",
     src: "init.recovery.kirin970.rc",
     sub_dir: "init",
     recovery: true,
+}
+
+prebuilt_etc {
+    name: "init.audio.rc",
+    src: "init.audio.rc",
+    sub_dir: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.balong_modem.rc",
+    src: "init.balong_modem.rc",
+    sub_dir: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.connectivity.rc",
+    src: "init.connectivity.rc",
+    sub_dir: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.device.rc",
+    src: "init.device.rc",
+    sub_dir: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.hisi.rc",
+    src: "init.hisi.rc",
+    sub_dir: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.hisi.usb.rc",
+    src: "init.hisi.usb.rc",
+    sub_dir: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.kirin970.rc",
+    src: "init.kirin970.rc",
+    sub_dir: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.manufacture.rc",
+    src: "init.manufacture.rc",
+    sub_dir: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.performance.rc",
+    src: "init.performance.rc",
+    sub_dir: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.platform.rc",
+    src: "init.platform.rc",
+    sub_dir: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.post-fs-data.rc",
+    src: "init.post-fs-data.rc",
+    sub_dir: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.tee.rc",
+    src: "init.tee.rc",
+    sub_dir: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.vowifi.rc",
+    src: "init.vowifi.rc",
+    sub_dir: "init/hw",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "ueventd.kirin970.rc",
+    filename: "ueventd.rc",
+    src: "ueventd.kirin970.rc",
+    vendor: true,
 }
