@@ -20,7 +20,8 @@ PRODUCT_SHIPPING_API_LEVEL := $(BOARD_SHIPPING_API_LEVEL)
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
-    $(LOCAL_PATH)
+    $(LOCAL_PATH) \
+    hardware/huawei
 
 # Inherit from the proprietary files makefile.
 $(call inherit-product, vendor/huawei/kirin970-common/kirin970-common-vendor.mk)
