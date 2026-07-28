@@ -100,5 +100,8 @@ TARGET_USERIMAGES_USE_F2FS := true
 # Releasetools
 TARGET_RELEASETOOLS_EXTENSIONS := hardware/huawei/releasetools
 
+# SEPolicy
+include hardware/huawei/sepolicy/hisi/SEPolicy.mk
+
 # Include the proprietary files BoardConfig.
 include vendor/huawei/kirin970-common/BoardConfigVendor.mk
