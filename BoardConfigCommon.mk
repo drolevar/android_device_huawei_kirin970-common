@@ -26,6 +26,11 @@ AB_OTA_UPDATER := false
 TARGET_BOOTLOADER_BOARD_NAME := kirin970
 TARGET_NO_BOOTLOADER := true
 
+# HIDL
+DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
+    hardware/huawei/vintf/vendor_framework_compatibility_matrix.xml
+DEVICE_MATRIX_FILE := hardware/huawei/vintf/compatibility_matrix.xml
+
 # Kernel
 BOARD_KERNEL_CMDLINE := \
     loglevel=4 \
