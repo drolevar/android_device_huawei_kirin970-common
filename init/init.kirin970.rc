@@ -1,4 +1,4 @@
-hex/ Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2008 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -6,6 +6,19 @@ hex/ Copyright (C) 2008 The Android Open Source Project
 #
 #      http://www.apache.org/licenses/LICENSE-2.0
 #
+
+import /vendor/etc/init/hw/init.audio.rc
+import /vendor/etc/init/hw/init.balong_modem.rc
+import /vendor/etc/init/hw/init.connectivity.rc
+import /vendor/etc/init/hw/init.device.rc
+import /vendor/etc/init/hw/init.hisi.rc
+import /vendor/etc/init/hw/init.hisi.usb.rc
+import /vendor/etc/init/hw/init.manufacture.rc
+import /vendor/etc/init/hw/init.performance.rc
+import /vendor/etc/init/hw/init.platform.rc
+import /vendor/etc/init/hw/init.tee.rc
+import /vendor/etc/init/hw/init.vowifi.rc
+import /vendor/etc/init/hw/init.post-fs-data.rc
 
 on property:ro.vendor.user_hota_update=1
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1556000
