@@ -194,6 +194,13 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
+# Power
+PRODUCT_PACKAGES += \
+    android.hardware.power-service.lineage-libperfmgr
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/powerhint.json:$(TARGET_COPY_OUT_VENDOR)/etc/powerhint.json
+
 # Sensors
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.sensor.accelerometer.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.sensor.accelerometer.xml \
@@ -213,6 +220,9 @@ PRODUCT_SHIPPING_API_LEVEL := $(BOARD_SHIPPING_API_LEVEL)
 PRODUCT_SOONG_NAMESPACES += \
     $(LOCAL_PATH) \
     bootable/deprecated-ota \
+    hardware/google/interfaces \
+    hardware/google/pixel \
+    hardware/lineage/interfaces/power-libperfmgr \
     hardware/huawei \
     hardware/huawei/libbt-vendor
 
