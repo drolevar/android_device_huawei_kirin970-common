@@ -121,3 +121,38 @@ prebuilt_etc {
     src: "ueventd.kirin970.rc",
     vendor: true,
 }
+
+prebuilt_etc {
+    name: "init.connectivity.bcm43xx.rc",
+    src: "connectivity/init.connectivity.bcm43xx.rc",
+    sub_dir: "init/connectivity",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.connectivity.gps.rc",
+    src: "connectivity/init.connectivity.gps.rc",
+    sub_dir: "init/connectivity",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.connectivity.hi1102.rc",
+    src: "connectivity/init.connectivity.hi1102.rc",
+    sub_dir: "init/connectivity",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.connectivity.hi1103.rc",
+    src: "connectivity/init.connectivity.hi1103.rc",
+    sub_dir: "init/connectivity",
+    vendor: true,
+}
+
+prebuilt_etc {
+    name: "init.connectivity.hisi.rc",
+    src: "connectivity/init.connectivity.hisi.rc",
+    sub_dir: "init/connectivity",
+    vendor: true,
+}

@@ -81,6 +81,13 @@ PRODUCT_PACKAGES += \
     init.vowifi.rc \
     ueventd.kirin970.rc
 
+PRODUCT_PACKAGES += \
+    init.connectivity.bcm43xx.rc \
+    init.connectivity.gps.rc \
+    init.connectivity.hi1102.rc \
+    init.connectivity.hi1103.rc \
+    init.connectivity.hisi.rc
+
 # Kernel
 PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := false
 PRODUCT_ENABLE_UFFD_GC := false
