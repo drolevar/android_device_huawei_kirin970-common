@@ -74,6 +74,10 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/com.android.nfc_extras.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/com.android.nfc_extras.xml
 
 # Partitions
+PRODUCT_PACKAGES += \
+    vendor_modem_modem_fw_mountpoint \
+    odm_etc_ncfg_mountpoint
+
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
 # Sensors
