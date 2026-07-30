@@ -151,6 +151,10 @@ PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := false
 PRODUCT_ENABLE_UFFD_GC := false
 OVERRIDE_ENABLE_UFFD_GC := false
 
+# Lights
+PRODUCT_PACKAGES += \
+    android.hardware.light-service.lineage
+
 # NFC
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.nfc.hce.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.nfc.hce.xml \
