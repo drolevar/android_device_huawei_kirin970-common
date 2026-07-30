@@ -103,6 +103,8 @@ PRODUCT_COPY_FILES += \
 # Overlays
 PRODUCT_ENFORCE_RRO_TARGETS := *
 
+$(call inherit-product, hardware/huawei/overlay/hisi.mk)
+
 # Partitions
 PRODUCT_PACKAGES += \
     vendor_modem_modem_fw_mountpoint \
