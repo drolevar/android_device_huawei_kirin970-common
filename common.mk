@@ -4,6 +4,17 @@
 #
 
 # Audio
+$(call soong_config_set,android_hardware_audio,run_64bit,true)
+
+PRODUCT_PACKAGES += \
+    android.hardware.audio@5.0-impl \
+    android.hardware.audio.effect@5.0-impl \
+    android.hardware.audio.service
+
+PRODUCT_PACKAGES += \
+    audio.r_submix.default \
+    audio.usb.default
+
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.midi.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.midi.xml
 
