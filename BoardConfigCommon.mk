@@ -120,5 +120,14 @@ BOARD_ROOT_EXTRA_FOLDERS := \
 # SEPolicy
 include hardware/huawei/sepolicy/hisi/SEPolicy.mk
 
+# Wifi
+BOARD_HOSTAPD_DRIVER := NL80211
+BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_bcmdhd
+BOARD_WLAN_DEVICE := bcmdhd
+BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_bcmdhd
+WIFI_HIDL_UNIFIED_SUPPLICANT_SERVICE_RC_ENTRY := true
+WPA_SUPPLICANT_VERSION := VER_0_8_X
+
 # Include the proprietary files BoardConfig.
 include vendor/huawei/kirin970-common/BoardConfigVendor.mk
