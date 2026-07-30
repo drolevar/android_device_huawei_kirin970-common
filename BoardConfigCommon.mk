@@ -5,6 +5,9 @@
 
 COMMON_PATH := device/huawei/kirin970-common
 
+# Build System
+BUILD_BROKEN_DUP_RULES := true
+
 # Architecture
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
@@ -111,11 +114,17 @@ TARGET_USERIMAGES_USE_F2FS := true
 # Releasetools
 TARGET_RELEASETOOLS_EXTENSIONS := hardware/huawei/releasetools
 
+# RIL
+ENABLE_VENDOR_RIL_SERVICE := true
+
 # Root
 BOARD_ROOT_EXTRA_FOLDERS := \
     modem_log \
     sec_storage \
     splash2
+
+# Security patch
+VENDOR_SECURITY_PATCH := 2022-05-01
 
 # SEPolicy
 include hardware/huawei/sepolicy/hisi/SEPolicy.mk
