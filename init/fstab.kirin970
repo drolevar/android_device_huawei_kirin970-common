@@ -17,6 +17,7 @@ odm                                                     /odm                ext4
 /dev/block/by-name/patch                                /metadata           ext4      noatime,nosuid,nodev                          wait,check,formattable,first_stage_mount
 /dev/block/by-name/misc                                 /misc               emmc      defaults                                      defaults
 /dev/block/by-name/hisee_fs                             /mnt/hisee_fs       ext4      ro,barrier=1,context=u:object_r:hisee_data_file:s0    wait,check,notrim,nofail
+/dev/block/by-name/secure_storage                       /sec_storage        ext4      nosuid,nodev,noatime,discard,auto_da_alloc,mblk_io_submit,data=journal,context=u:object_r:teecd_data_file:s0    wait,crypt
 /dev/block/by-name/oeminfo                              /oeminfo            emmc      defaults                                      defaults,first_stage_mount
 
 /devices/hi_mci.1/mmc_host/mmc1/*                       auto                auto      defaults                                      voldmanaged=sdcard:auto,noemulatedsd,encryptable=userdata

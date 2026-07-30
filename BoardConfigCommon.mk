@@ -107,6 +107,12 @@ TARGET_USERIMAGES_USE_F2FS := true
 # Releasetools
 TARGET_RELEASETOOLS_EXTENSIONS := hardware/huawei/releasetools
 
+# Root
+BOARD_ROOT_EXTRA_FOLDERS := \
+    modem_log \
+    sec_storage \
+    splash2
+
 # SEPolicy
 include hardware/huawei/sepolicy/hisi/SEPolicy.mk
 
