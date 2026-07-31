@@ -83,7 +83,12 @@ blob_fixups: blob_fixups_user_type = {
         'vendor/lib64/libtrans_depth_code.so',
         'vendor/lib64/libvenuscropimageface.so',
     ): blob_fixup()
-        .replace_needed('libstdc++.so', 'libstdc++_vendor.so')
+        .replace_needed('libstdc++.so', 'libstdc++_vendor.so'),
+    (
+        'vendor/lib/libOMX.hisi.media.common.so',
+        'vendor/lib64/libOMX.hisi.media.common.so',
+    ): blob_fixup()
+        .add_needed('libui_shim.so')
 }  # fmt: skip
 
 module = ExtractUtilsModule(
