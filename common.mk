@@ -57,6 +57,11 @@ PRODUCT_COPY_FILES += \
 $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
 
 # Display
+# Explicitly permit Lineage 24's retained Gralloc2 fallback.
+# The donor vendor stack declares mapper 2.1; this does not validate its blobs,
+# ION permissions, composer service, or SELinux policy on BLA-L29.
+$(call soong_config_set_bool,libui,legacy_gralloc,true)
+
 PRODUCT_PACKAGES += \
     android.hardware.graphics.allocator@2.0-impl \
     android.hardware.graphics.allocator@2.0-service \
