@@ -8,7 +8,7 @@ vendor/lib/libaudio_xml_parser.so|a9e8ea49297e25833bd0ccbe10ab2eac662dee33
 vendor/lib/libaudioeffectutil.so|56cafbfc59c7254d30c3827243eaa29f276d15c5
 vendor/lib/libdsp_ctl.so|bd9cbff2763a998aeeaedd0b59a9086b0aba2b34
 vendor/lib/libhivwservice.so|9544eb197c90d2d0d979d251d4b80bd3cb69519d
-vendor/lib64/hw/audio.primary.hisi.so:vendor/lib64/hw/audio.primary.kirin970.so;FIX_SONAME|0b7a4144b7857f9596b2f975d4b89d1345e3ddb8
+vendor/lib64/hw/audio.primary.hisi.so:vendor/lib64/hw/audio.primary.kirin970.so;FIX_SONAME|0b7a4144b7857f9596b2f975d4b89d1345e3ddb8|7122bfba82acc00f94da543f38e5d0163d53dd54
 vendor/lib64/audio.custom.so|7458be138259a8e23d0cc61dfc06f67036bea01d
 vendor/lib64/audio.extension.so|3bc6a6af160947426b3f5c43511296ab63aab903
 vendor/lib64/libalg_manager.so|c7ede3e6695af375936469423bdfe95d6c33e5a9
@@ -38,7 +38,7 @@ vendor/lib64/soundfx/liboffloadvisualizer.so|1c60e9825304aa0f2f19298dbae4332da76
 # Bluetooth
 vendor/etc/bluetooth/bt_vendor.conf|f2c04f823ee5624df21b34b75cefe94440a8aebe
 vendor/lib64/libbt-vendor-hisi.so|76cb32cc2b631688adc3f9c7fbcf3963a029dbcf
-vendor/lib64/libbt-vendor.so:vendor/lib64/libbt-vendor-bcm.so;FIX_SONAME|095d7a69d79d4a3803d39422ea277ecd78b1c45b
+vendor/lib64/libbt-vendor.so:vendor/lib64/libbt-vendor-bcm.so;FIX_SONAME|095d7a69d79d4a3803d39422ea277ecd78b1c45b|6478b892516f4a14530516fc4a482ac6c72b5e28
 
 # Camera
 vendor/bin/hw/vendor.huawei.hardware.camera.factory@1.1-service|3f57fe3bbfb1f2653ba7979e5250875591155ad6
@@ -63,7 +63,7 @@ vendor/lib/libhire_hievent.so|aa0b39e64d6a9c27647bb2be16b109738c4cfbd9
 vendor/lib/libispenhnc.so|b5d01559ecdfae367510f2a95de1d581cb47b95d
 vendor/lib/libmmpa.so|e73e4093d6a9b63f8786880844cf36b0af97b470
 vendor/lib/libmotiondetect.so|d1d3681d7b138f186404c3b456dc80e922686fb6
-vendor/lib/libobjectdetection.so;FIX_SONAME|e8225c7a23ccac75e35ee412d19d92b24df05667
+vendor/lib/libobjectdetection.so;FIX_SONAME|e8225c7a23ccac75e35ee412d19d92b24df05667|aa74fab462c79dc52d3f96504528d72004a688e6
 vendor/lib/libscenedetection.so|dbde25b291d69ab649a892589c61e1b0db0408a6
 vendor/lib/vendor.huawei.hardware.ai.dedicatedmm@1.0.so|583edfa232946deff1967e14c0fb39708d6940d4
 vendor/lib/vendor.huawei.hardware.ai@1.0.so|ef4b24df06401273423bc6d25e19686e307e6b30
@@ -97,21 +97,21 @@ vendor/lib64/hw/vendor.huawei.hardware.camera.factory@1.1-impl.so|b42f13ffc0b436
 vendor/lib64/hwcam/hwcam.ddt.so|e2ede61099a8cd11e82e9a2db729f66b3383d788
 vendor/lib64/hwcam/hwcam.services.so|a237c0bc9377518cdc358b1f372fb3187608ceb3
 vendor/lib64/libAfStatCalc.so|aba6541f224e6600ed98a74365564efb3632a7c7
-vendor/lib64/libBestShot.so|339e684e9f3941d97e6da22f78bcbc6a841a7836
-vendor/lib64/libDocBeauty.so|4e64ca0b32f47bd9abb500327febc49407cd29af
-vendor/lib64/libFNFD.so|6ba29a38344a44a2d59c9db9c000eecd26b270b8
-vendor/lib64/libFNFFD.so|85988e024d1f285445184d973fc5e443667c3c7c
-vendor/lib64/libFNFR.so|00e0e778aa1e1605f91607fa88520a7325d7c1dc
-vendor/lib64/libFaceBeautyMeiwo.so|2406dc8dbff3f020767c2bf49cd0c1d30f834923
-vendor/lib64/libHW_BShutter.so|25c48fa565a733338ef843059914ddc6e92eee14
-vendor/lib64/libHW_BShutterRaw.so|97a877a7c1ca4eae7aeaef20ef0e226bd7319793
-vendor/lib64/libHwDocDetection.so|52a028b7148436c5572310394a7570eb6bc5e8f6
+vendor/lib64/libBestShot.so|339e684e9f3941d97e6da22f78bcbc6a841a7836|c0bb9239353afd882dee5098d96c70325cb07f1f
+vendor/lib64/libDocBeauty.so|4e64ca0b32f47bd9abb500327febc49407cd29af|6b68bbbff53242b5e09a50c26f4c0c7c7f05a587
+vendor/lib64/libFNFD.so|6ba29a38344a44a2d59c9db9c000eecd26b270b8|7685e1044236e7d7a174ec6ba8035eae661ffada
+vendor/lib64/libFNFFD.so|85988e024d1f285445184d973fc5e443667c3c7c|5314b495de08fa9b83a2dea66f4465d66234c86a
+vendor/lib64/libFNFR.so|00e0e778aa1e1605f91607fa88520a7325d7c1dc|3215025516bc744a83c6c406c5bf8dde8a197ed1
+vendor/lib64/libFaceBeautyMeiwo.so|2406dc8dbff3f020767c2bf49cd0c1d30f834923|bd4efa79eee8f92a06761ac22b248e6e7f6f2fda
+vendor/lib64/libHW_BShutter.so|25c48fa565a733338ef843059914ddc6e92eee14|cf4957d228792355ad9cdd21cf196b2b328ff76b
+vendor/lib64/libHW_BShutterRaw.so|97a877a7c1ca4eae7aeaef20ef0e226bd7319793|2a954923a3a73ea947802ecfc88a4cd20f1ac3d8
+vendor/lib64/libHwDocDetection.so|52a028b7148436c5572310394a7570eb6bc5e8f6|f7b1f3af838bf9b011352bed86424df946b58983
 vendor/lib64/libHwFaceAttributes.so|5ba8dea652dd45ee7b93ad5bd7c47da0927ea2c4
 vendor/lib64/libIPU12DriverUser.so|1a1f546b8df1f6baad1a6ccf2174cd7a0dff8288
-vendor/lib64/libLaserSelfCali.so|97461bfdb4bde317d323ace529b1a7ebfdebc2c9
-vendor/lib64/libSmartAE.so|9e7772211c89c2759d69a51c2565e0a75e0bab6d
+vendor/lib64/libLaserSelfCali.so|97461bfdb4bde317d323ace529b1a7ebfdebc2c9|7fb72ec7f4d4dc5bf4c419947cdd1e77bea33e99
+vendor/lib64/libSmartAE.so|9e7772211c89c2759d69a51c2565e0a75e0bab6d|0764d1d88d5e0d30e2d2959c6580bb0500b8ff9e
 vendor/lib64/libSuperVideo.so|949174da52ff28c62e055143b99c66dbefceede0
-vendor/lib64/libVideoDenoise.so|b94f24a96147c8522bb0af576a6498f4a8a27770
+vendor/lib64/libVideoDenoise.so|b94f24a96147c8522bb0af576a6498f4a8a27770|73aac48b995734f512fcf88d45a797a4699fa763
 vendor/lib64/libai_client.so|9a0eb919e56a84264813cd917b2bf67f03e2deb7
 vendor/lib64/libc_sec.so|358f5d9efba76159b92bcc8ab519bb9123edeb3d
 vendor/lib64/libcamera_algo.so|ae3639ef81680042c2558b24b606c60374e8d1d4
@@ -122,47 +122,47 @@ vendor/lib64/libcameraoemotp.so|cd12221e45c358e2e42c448175be9cd82b15aeaa
 vendor/lib64/libcie.so|d60d24288fadae2f863a7fbae60ead17a680ea8c
 vendor/lib64/libcontrastCal.so|0f5a6517dd6a937ef467df9d30fd972d5e7b40a1
 vendor/lib64/libdcamera_capture.so|faded0fc833df85ab2977e06c0c140decc19738f
-vendor/lib64/libdcamera_disptodepth.so|7e0ded3db0404ca866653a30870b46259a606bb3
+vendor/lib64/libdcamera_disptodepth.so|7e0ded3db0404ca866653a30870b46259a606bb3|8d74cd28b874eee5490ecfe8cb528dab0d7bc36c
 vendor/lib64/libdcamera_distortion.so|aaf6be1e6b83ed8d93ead0c09ed5432958172178
-vendor/lib64/libdcamera_effect.so|1fd33cc2cc0832e4171154c385aa121ccb788afb
+vendor/lib64/libdcamera_effect.so|1fd33cc2cc0832e4171154c385aa121ccb788afb|ebd989b6d58e8335d64bc89b5dbdf3ff98f294a0
 vendor/lib64/libdcamera_sr.so|ea25cc249de6f041b38c2937dc71a2c9ca2ceac8
 vendor/lib64/libdcamera_stream.so|b050e4992d05c2a89573098c71e4f515eba5455c
 vendor/lib64/libdcamera_visual_effect.so|3434890eb40875c080eb9dea89c341a1e9bbf05f
 vendor/lib64/libdhdr_acore.so|727d9e764854ef2e3a62636d92ab96ba9a8333ab
 vendor/lib64/libdlsr.so|42eb76c78ca3d6a1d9477ccf980b21b995958f84
-vendor/lib64/libfairlight.so;FIX_SONAME|9e142c0ea3eb9b24a102ab7b83c470690e81b31c
-vendor/lib64/libfairlight_ai.so|5c9d75d5237a7182de9a6486359911620dcc9287
-vendor/lib64/libfairlight_ipu.so|9eddbd689e6b9f12302dd3ebd105fa66efdae0bd
+vendor/lib64/libfairlight.so;FIX_SONAME|9e142c0ea3eb9b24a102ab7b83c470690e81b31c|01cd01e1013e3fac18bdfa09ac5347ca503fc845
+vendor/lib64/libfairlight_ai.so|5c9d75d5237a7182de9a6486359911620dcc9287|4c7f2e1328131ae6396f72a018daee34a7442191
+vendor/lib64/libfairlight_ipu.so|9eddbd689e6b9f12302dd3ebd105fa66efdae0bd|2ca30633e1fd7aa68cc6177105151dc1f193fc7a
 vendor/lib64/libfcamera_visual_effect.so|928ec7f81ea86331c59cdabdac753b904f934e8f
-vendor/lib64/libhdr.so|ac5182d8d48e537ae31803e38ec81df39b593384
+vendor/lib64/libhdr.so|ac5182d8d48e537ae31803e38ec81df39b593384|78dad32fcfd59a76c6e5ecd3f83c7e94c76ba325
 vendor/lib64/libhdrp.so|e15f5837691cf362fe4f2bdcf08d2286c9aca123
 vendor/lib64/libhiai_client.so|18fac6c6642bb4b28db00499703a0648837909b6
 vendor/lib64/libhiai_common.so|7e644ea360c9b532c29679c065f1d70c9f9bb1dd
 vendor/lib64/libhiai_hidl.so|ba82ac208ebe731924f6a31290f84bcaee8c2780
 vendor/lib64/libhire_hievent.so|312d26f0e4099aa09c67f091cceae58f2840e872
 vendor/lib64/libhorizondetect.so|df0288801e1c9dd6ffedf5323b45189d68974473
-vendor/lib64/libimedia_filters.so|9ecaed868c032cf759c6a0197abd69160a2b97b3
-vendor/lib64/libipu.so|c4173e41db55617f929288b348a30a66b13d6888
+vendor/lib64/libimedia_filters.so|9ecaed868c032cf759c6a0197abd69160a2b97b3|d59b60401ce92fefc067c77bb5a73c00f580dfd8
+vendor/lib64/libipu.so|c4173e41db55617f929288b348a30a66b13d6888|d6c57616f4e797b249c4829929ace1ac0cc96538
 vendor/lib64/libipu_smmu.so|24404952fc41c5b760a226bc5c1ae156d0072543
 vendor/lib64/libispenhnc.so|ef2ab71e05a551f150c5abea6121dc0e836be732
 vendor/lib64/libmmpa.so|48d3529f282c949f73ef843c1e04b16c33316eac
-vendor/lib64/libmorpho_effect_library5.so|29ed8c99428f11efca5890d71ec833d3dbf60252
-vendor/lib64/libmotionEstimation.so|b80dc8ed860b3743d9a6bbcbf36c59217a885eb6
+vendor/lib64/libmorpho_effect_library5.so|29ed8c99428f11efca5890d71ec833d3dbf60252|7355b2c875b335c98ffc800760fca4fa71e7325e
+vendor/lib64/libmotionEstimation.so|b80dc8ed860b3743d9a6bbcbf36c59217a885eb6|0f75fdc1520e0f9b5e77b6cd85c86590708f4b1c
 vendor/lib64/libmotiondetect.so|99a33427cf3838a0bd365f7369502fba33ac5c10
-vendor/lib64/libmrc_cg_ldc.so|a6ea2b84529a8bce70440f92f82a9d224632b6cf
-vendor/lib64/libmrc_cg_niceFood.so|dbcc9ec895419f04bd241d02e9631ea4e4a8b1f7
-vendor/lib64/libmrc_cg_postprocess.so|423ad6836f4b4453e3251c9e8910fd0a8fdef534
+vendor/lib64/libmrc_cg_ldc.so|a6ea2b84529a8bce70440f92f82a9d224632b6cf|895b02e319236d16dff9a7fc8091bfe43f419821
+vendor/lib64/libmrc_cg_niceFood.so|dbcc9ec895419f04bd241d02e9631ea4e4a8b1f7|c3e4f5308382982f35991d754c1ebc49beba0061
+vendor/lib64/libmrc_cg_postprocess.so|423ad6836f4b4453e3251c9e8910fd0a8fdef534|d9c3fcbb5b8425085197670ae21b60829e872c7e
 vendor/lib64/libmrc_cg_postprocess_ivp.so|399678e69bcc67bc929cd7cf1efb7fba18ca7362
 vendor/lib64/libmrc_cg_sz.so|bf03823bc1a2cdae08407a45c5e8ae39d4b210cc
 vendor/lib64/libncnn.so|100a5b01c1bd5368d15ed9e0660d4f5ba701fbfa
 vendor/lib64/libobjectdetection.so|904f86cfbec845727a911e8002815136f67aa639
 vendor/lib64/liboz_colorfusion_v2.so|d8fa6a79abea55fc4402281242093d84fbebaa1a
 vendor/lib64/liboz_v2.so|51cb086969041dc8985133716f3df0cfa9099f4f
-vendor/lib64/librawhdr.so;FIX_SONAME|baf66abe995bc822c7741884ceae0b5eda124a5b
+vendor/lib64/librawhdr.so;FIX_SONAME|baf66abe995bc822c7741884ceae0b5eda124a5b|46c8ebfb26964135127c9b73afc0ed448d1834f1
 vendor/lib64/libscenedetection.so|080e806fb96b93bab18a7c843b6a2ce13f11130f
 vendor/lib64/libsegmentationmask.so|91cb23dbb95dfd835a0a6e69836935ab407b4683
-vendor/lib64/libtrans_depth_code.so|dc22adeea0a3d8001baf8df6a2862c55e4cb6b24
-vendor/lib64/libvenuscropimageface.so|100a519918f54d1219885ae5cd2d8cd6e2d2fa17
+vendor/lib64/libtrans_depth_code.so|dc22adeea0a3d8001baf8df6a2862c55e4cb6b24|196e350ac615e2945623c86fed4a7111c0d1dc05
+vendor/lib64/libvenuscropimageface.so|100a519918f54d1219885ae5cd2d8cd6e2d2fa17|4bcd2f316d3c101eefef12239f288dcc61ca899c
 vendor/lib64/libvircam.so|3535cd481d815f2e8df2adbba7b2e389dbab94bf
 vendor/lib64/vendor.huawei.hardware.ai.dedicatedmm@1.0.so|4a175c1629be678b856864315e7bc76b1d3827a4
 vendor/lib64/vendor.huawei.hardware.ai@1.0.so|85fe9868e3dd5bf7c5f022c132819592de9ebba4
@@ -548,7 +548,7 @@ vendor/lib/displayeffect.kirin970.so|0c30b875c0bcff6bfae198f011df4fba70d6dc75
 vendor/lib/libdisplay_hdr_engine.so|54c68c491e27574144b258ac6da19f86bf8616f7
 vendor/lib/libhilog.so|e14a84ce97ffd212672c7b700f5ec07f70d9612e
 vendor/lib/libhitrace.so|973b3f524c7987c3c777a3a759a6d5e00699adf6
-vendor/lib/libhiview.so|e203e448eb0f094dfa5fd7e5616f05fd5286baa4
+vendor/lib/libhiview.so|e203e448eb0f094dfa5fd7e5616f05fd5286baa4|e123830a04043014aaf3b931159fd211cc63e0da
 vendor/lib/libhw_display_effect.so|4cbafb93bea0ab69b6b771456d4d1840c193bc31
 vendor/lib/libhw_display_test.so|f0852c640de9d75e08408cf724fbfc85482a43cd
 vendor/lib/vendor.huawei.hardware.graphics.gpucommon@1.0.so|9eb3664c1d5fcc37e148bdce3bbfa7f95c06fb0d
@@ -569,7 +569,7 @@ vendor/lib64/libRGBW.so|3bee106629a1b78a0b3373faa7a1a51872ae3039
 vendor/lib64/libdisplay_hdr_engine.so|172fbb13fed352817e4eb4ede670ab1819418c02
 vendor/lib64/libhilog.so|34dbf58c51823d6a85dc0fea6e50285724af288e
 vendor/lib64/libhitrace.so|0ba4ee8dd6060cd4cd2d5c906d3a86cbb6446e36
-vendor/lib64/libhiview.so|e976d9e34956f2f202574b25199b02b46fbbb7a4
+vendor/lib64/libhiview.so|e976d9e34956f2f202574b25199b02b46fbbb7a4|85234a058169fdc2564baf5849b28c687a2241b9
 vendor/lib64/libhw_display_effect.so|94307383337242fc9854c933a82b8b2976e57e68
 vendor/lib64/libhw_display_test.so|0cd52db2c7834c001aa67bb7bf2e71b0af30557d
 vendor/lib64/vendor.huawei.hardware.graphics.gpucommon@1.0.so|ebbfccac7ea772f64da622282e4e33a40d94bcdd
@@ -586,11 +586,11 @@ vendor/lib64/vendor.huawei.hardware.hwdisplay@1.1.so|d89520c13537b1a202ee4ff6407
 # DRM (widevine)
 preavs/bin/hw/android.hardware.drm@1.2-service.widevine:vendor/bin/hw/android.hardware.drm@1.2-service.widevine|69c0b631a300d709076f2b0620e8024e11a53cb2
 preavs/lib/libwvhidl.so:vendor/lib/libwvhidl.so|e002093ae2d49a93bcbed689d370fcf135cb2320
-vendor/etc/init/android.hardware.drm@1.2-service.widevine.rc|ec52d356861895656488c6fb6a30b5f142db10d4
+vendor/etc/init/android.hardware.drm@1.2-service.widevine.rc|ec52d356861895656488c6fb6a30b5f142db10d4|d87d7852d38ef135fe366715130f9d988847c22c
 
 # Fingerprint
 vendor/bin/hw/vendor.huawei.hardware.biometrics.fingerprint@2.2-service|c01c604a22ad4eb11ba70239904b969beeeb272e
-vendor/etc/init/vendor.huawei.hardware.biometrics.fingerprint@2.2-service.rc|dd4180e7b0c8200a4994bdafd7c21778d9e8d63b
+vendor/etc/init/vendor.huawei.hardware.biometrics.fingerprint@2.2-service.rc|dd4180e7b0c8200a4994bdafd7c21778d9e8d63b|3db806b6669835b76831d432f30aa968b938fa63
 vendor/lib/hw/fingerprint.kirin970.so|ce4073fa6d7167bafbf5afccf512ac627aed868c
 vendor/lib/hw/udfingerprint.kirin970.so|f8a999d5893805a92cf70d5b9761f605031fd8f3
 vendor/lib/lib_fpc_tac_shared.so|ab19f355ab427fdd2b51e7bdd4c82ba0900c142c
@@ -766,10 +766,10 @@ vendor/etc/nlp.conf|a80e91c194df7761c6fea4a4b72ee421b213b584
 vendor/etc/nlp_beta.conf|a80e91c194df7761c6fea4a4b72ee421b213b584
 vendor/lib/libgnss_lss_gw_thirdparty.so|672b641ac0398868bc0c3a4e3d48f4a8ca0d10dc
 vendor/lib/libgnss_lss_gw_thirdparty_with_gal.so|f41f180a5c1809551fa94fb7a8e8be076084b2fa
-vendor/lib64/hw/gps.default.so;FIX_SONAME|29644dbbde6ed190dbf09ab43bf574188a60f487
+vendor/lib64/hw/gps.default.so;FIX_SONAME|29644dbbde6ed190dbf09ab43bf574188a60f487|6f1b83ed41ad698da3884294f3d621204a3d9816
 vendor/lib64/hw/gps.hi1102.default.so|271d0ee314a97094f2c3382e3f8ea97cae961d14
-vendor/lib64/hw/gps47531.default.so;FIX_SONAME|29644dbbde6ed190dbf09ab43bf574188a60f487
-vendor/lib64/hw/gps4774.default.so;FIX_SONAME|b1cb3d8216afe16caaac770880c51c53b17a8dfe
+vendor/lib64/hw/gps47531.default.so;FIX_SONAME|29644dbbde6ed190dbf09ab43bf574188a60f487|97bee798a9bc6853326bd11132915690c37e359a
+vendor/lib64/hw/gps4774.default.so;FIX_SONAME|b1cb3d8216afe16caaac770880c51c53b17a8dfe|35e93ad1171586c76c574650d5e6086dc9697e63
 vendor/lib64/hw/vendor.huawei.hardware.gnss@1.0-impl.so|7de2c0d02fe0dea423dac74135e32c17d73b1149
 vendor/lib64/libgnss_common_hisi.so|03b50f4332d58708bc71e6af4ec55ebbc29836b7
 vendor/lib64/libgnss_higeo_hisi.so|a3889f659936450697cecb1984f1f65689597b5c
@@ -784,17 +784,17 @@ vendor/lib64/vendor.huawei.hardware.gnss@1.0.so|1fd0156c141a27cc5d90e99c7ac79ba4
 vendor/lib64/vendor.huawei.hardware.gnss@2.0.so|d13b122bcc43ba9a95383d9765c9f5bcef37723c
 
 # Graphics
-vendor/lib/egl/libGLES_mali.so;SYMLINK=vendor/lib/hw/vulkan.kirin970.so|c64acb6e4ac90155ca950bf080da703e651d5592
+vendor/lib/egl/libGLES_mali.so;SYMLINK=vendor/lib/hw/vulkan.kirin970.so|c64acb6e4ac90155ca950bf080da703e651d5592|4a3602ed4629261a358986c6067bcd05c88c4ae9
 vendor/lib/hw/gralloc.kirin970.so|1bc82f9bafb528b6a2848b8569e8d622e48ebc60
-vendor/lib/hw/hwcomposer.kirin970.so|37a69d6047dbbba25e8ade73bc41f53ec0eccbe3
+vendor/lib/hw/hwcomposer.kirin970.so|37a69d6047dbbba25e8ade73bc41f53ec0eccbe3|18fea2b20dcc57d04909b482dfe2135e2aadda6b
 vendor/lib/libOpenCL.so|9536ab947b64d5b1b4070cd55386cc27e52e5e53
 vendor/lib/libhiion.so|d3d31e8994ff7b15a1f2f56b83137d67a0302360
-vendor/lib64/egl/libGLES_mali.so;SYMLINK=vendor/lib64/hw/vulkan.kirin970.so|dd4c8a04f109c78438c4eed6836892b90feecd18
+vendor/lib64/egl/libGLES_mali.so;SYMLINK=vendor/lib64/hw/vulkan.kirin970.so|dd4c8a04f109c78438c4eed6836892b90feecd18|b560b369444596970649b684125c2bb9edac9f43
 vendor/lib64/hw/gralloc.kirin970.so|1cdd450682daa996175eab11dca7d8638feca2de
-vendor/lib64/hw/hwcomposer.kirin970.so|010962a73b7a698810629def7067bdd4ca12daf0
+vendor/lib64/hw/hwcomposer.kirin970.so|010962a73b7a698810629def7067bdd4ca12daf0|529d7a1244fe9df8a592db9ad554d4e60953228b
 vendor/lib64/libOpenCL.so|24663853efb6f1a92808718ceca04735a3e93f3d
-vendor/lib64/libOpenCLFoundation.so|d5319b5458625ce9c9e9750bc62cc9ec56627863
-vendor/lib64/libSR_opencl.so|b305b37992e6088c7b65bb988ac0903cbe75655a
+vendor/lib64/libOpenCLFoundation.so|d5319b5458625ce9c9e9750bc62cc9ec56627863|4fc51b36ca21e01c5e0d3ab8c469457ac6153f4a
+vendor/lib64/libSR_opencl.so|b305b37992e6088c7b65bb988ac0903cbe75655a|4de4295d4178928d46ec818755fc6f60c04faa42
 vendor/lib64/libhiion.so|d493ce48b4b6373d2cf712f764b2e0d9ef059c40
 
 # IR
@@ -811,9 +811,9 @@ vendor/lib64/libir_driver_init.so|3a791accd28c6dd6d8954b60e66ecf80038ff186
 # Keymaster
 vendor/bin/hw/android.hardware.keymaster@3.0-service;MODULE=android.hardware.keymaster@3.0-service.hisi|acbdd3265035542ff9e1ec3099ab6bb6746fd7d2
 vendor/etc/init/android.hardware.keymaster@3.0-service.rc|f31babff3abdd73a905fb071671fde5c818d6a11
-vendor/lib/hw/android.hardware.keymaster@3.0-impl.so:vendor/lib/hw/android.hardware.keymaster@3.0-impl-hisi.so;FIX_SONAME|2f0535683e1fb3613fe121007fd94ef91c3790da
+vendor/lib/hw/android.hardware.keymaster@3.0-impl.so:vendor/lib/hw/android.hardware.keymaster@3.0-impl-hisi.so;FIX_SONAME|2f0535683e1fb3613fe121007fd94ef91c3790da|703a728540cfe65b66a92bd4ed1f6f968122e0bd
 vendor/lib/hw/keystore.kirin970.so|2ec299831b121cda0d7585df72cba8cd00f20a0b
-vendor/lib64/hw/android.hardware.keymaster@3.0-impl.so:vendor/lib64/hw/android.hardware.keymaster@3.0-impl-hisi.so;FIX_SONAME|acfe74bc850b3248134882b4773b2c412923caa4
+vendor/lib64/hw/android.hardware.keymaster@3.0-impl.so:vendor/lib64/hw/android.hardware.keymaster@3.0-impl-hisi.so;FIX_SONAME|acfe74bc850b3248134882b4773b2c412923caa4|207463e546a10629af24c82cc2c1cd64d2eb84f4
 vendor/lib64/hw/keystore.kirin970.so|d767fbbbdc371bfa3fb6bcb9c2eea0f440b16cb2
 
 # Media
@@ -831,8 +831,8 @@ vendor/lib64/vendor.huawei.hardware.graphics.mediacomm@2.0.so|360f67e6b188749a8c
 vendor/lib64/vendor.huawei.hardware.graphics.mediacomm@2.1.so|d8c5cd359d80a602e55b87d307e43d9825b28059
 
 # Memtrack
-vendor/lib/hw/memtrack.default.so:vendor/lib/hw/memtrack.kirin970.so;FIX_SONAME|739eaaf1c631a8bbab7accc4c5ec249ec4813641
-vendor/lib64/hw/memtrack.default.so:vendor/lib64/hw/memtrack.kirin970.so;FIX_SONAME|2df9d834b5258e224b70959475ddabedb5842e33
+vendor/lib/hw/memtrack.default.so:vendor/lib/hw/memtrack.kirin970.so;FIX_SONAME|739eaaf1c631a8bbab7accc4c5ec249ec4813641|c575573226cebe4de7c950a2463abd32d9f993e0
+vendor/lib64/hw/memtrack.default.so:vendor/lib64/hw/memtrack.kirin970.so;FIX_SONAME|2df9d834b5258e224b70959475ddabedb5842e33|fbfb8b7492418169ec5d7bf71f24c313224b584e
 
 # Modem
 vendor/etc/modemConfig/balong/FieldTest.cfg|fe253003cd3c9e0aaeefb1616b54007587f5c955
@@ -885,7 +885,7 @@ vendor/lib64/libnvme.so|a3e66c7b7bd793930e886055c9c54f6a5083e27e
 vendor/lib64/liboeminfo.so|a7e15505d62485a23984f588439598d5aad97e3b
 
 # OMX
-vendor/lib/libOMX.hisi.media.common.so|6cf4b3210c22e5b1ffbed703c5df2353d6c662ce
+vendor/lib/libOMX.hisi.media.common.so|6cf4b3210c22e5b1ffbed703c5df2353d6c662ce|422e78ae8a13a1b52126a69421339fc4e92a6ac1
 vendor/lib/libOMX.hisi.vdec.core.so|ebf3ff05f759f62d07719e808900b5538cd04338
 vendor/lib/libOMX.hisi.venc.core.so|eff990c8653f109c16d7dca30bf5db4e0930bcf6
 vendor/lib/libOMX.hisi.video.encoder.so|932635df3ca65a425379706542b2fbff1838d1e0
@@ -893,7 +893,7 @@ vendor/lib/libOMX_Core.so|8f2c0e0810b34944e2e3c14abb5fe22a5fcb91cd
 vendor/lib/libosal.so|69c37ac16febdcc6015491dc946e774fcd7211fd
 vendor/lib/libstagefrighthw.so|a0c63d1dae15ba5370cd702e3f52c21c21ad80bc
 vendor/lib/libvcodec_dfx.so|072135ebc5cce8c50caeb6c3ce8ab389ddca0bef
-vendor/lib64/libOMX.hisi.media.common.so|af0c53b682540f83ee74ec1d157a0411ad20a8ec
+vendor/lib64/libOMX.hisi.media.common.so|af0c53b682540f83ee74ec1d157a0411ad20a8ec|990a48b5ef93e04927f8297dadd0b6209ee2591d
 vendor/lib64/libOMX.hisi.vdec.core.so|103cc80ef5029df44e0e4dcaec278c28aa4870d8
 vendor/lib64/libOMX.hisi.venc.core.so|de43d09a332abed0c0b1d4aeb01f688bdf1a7b43
 vendor/lib64/libOMX.hisi.video.encoder.so|e5501e0865ddf7f421defe0a6b714f895b0e0142
@@ -904,7 +904,7 @@ vendor/lib64/libvcodec_dfx.so|1bcb7e808862d9356c83555572336692214018cc
 
 # RIL
 vendor/bin/hw/rild|f6a1cb4d741b8fa6fa363b331f08477ff84d905a
-vendor/etc/init/rild.rc|606338f1db49bd1b6b396346eba113d504959dbd
+vendor/etc/init/rild.rc|606338f1db49bd1b6b396346eba113d504959dbd|09a69c289bde4d03918cc0d46588d4f2d9732d82
 vendor/lib/libbalong-ril-1.so|57c0ce2afd5cef0002c0e0668a39203b4045f083
 vendor/lib/libbalong-ril.so|858dcf36d7e717250ce04d79193460d0a3c5198c
 vendor/lib/libcommril.so|36dc07acd82586698ec8524b73d8a25209726b55
@@ -954,9 +954,9 @@ vendor/lib64/vendor.huawei.hardware.nxpnfc@1.0.so|e209b0069e4137dd8d72976d7cbd39
 
 # Sensors
 vendor/etc/SensorHub.patch|3becc7f9a92ebc6ffc57bd0356af9f2321dab283
-vendor/lib/hw/sensors.default.so:vendor/lib/hw/sensors.kirin970.so;FIX_SONAME|a10c2a7581ad1f1d519877841833ff9b6c53af1f
+vendor/lib/hw/sensors.default.so:vendor/lib/hw/sensors.kirin970.so;FIX_SONAME|a10c2a7581ad1f1d519877841833ff9b6c53af1f|2aba574c24847bcb3451ff0e9f5a847fb57d02fc
 vendor/lib/lib_sensor_fac_interface.so|cbcba249f0d3ae9a23750da8bbefc13eb020c053
-vendor/lib64/hw/sensors.default.so:vendor/lib64/hw/sensors.kirin970.so;FIX_SONAME|9833d99b43af1f40845c219ba28133233bf19146
+vendor/lib64/hw/sensors.default.so:vendor/lib64/hw/sensors.kirin970.so;FIX_SONAME|9833d99b43af1f40845c219ba28133233bf19146|254cb55ffdbf795087ac41af9d954f64537208ed
 vendor/lib64/lib_sensor_fac_interface.so|4e8d81d6c351e98eb3d2f5babf923f1f23c045b6
 
 # Tee

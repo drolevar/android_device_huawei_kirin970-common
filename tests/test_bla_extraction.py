@@ -20,6 +20,15 @@ class BlaExtractionTests(unittest.TestCase):
         for name in ("vendor/etc/native_packages.xml", "vendor/etc/modemConfig/observe_config_encryt.xml"):
             self.assertIn(FileArgs.MAKE_COPY_RULE_ONLY, entries[name].args)
 
+    def test_each_declared_fixup_has_a_verified_output_pin(self):
+        spec = importlib.util.spec_from_file_location("common_recipe", ROOT / "extract-files.py")
+        recipe = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(recipe)
+        changed = [file for file in self.files() if recipe.module.should_fixup_file(file)]
+        self.assertGreater(len(changed), 20)
+        for file in changed:
+            self.assertIsNotNone(file.fixup_hash, file.dst)
+
 class SmartAeGuardTests(unittest.TestCase):
     def setUp(self):
         spec = importlib.util.spec_from_file_location("smartae", ROOT / "fixups/smartae.py")
