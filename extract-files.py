@@ -50,7 +50,7 @@ blob_fixups: blob_fixups_user_type = {
     ): blob_fixup()
         .replace_needed('libjsoncpp.so', 'libjsoncpp-v30.so'),
     'vendor/lib64/libSmartAE.so': blob_fixup()
-        .sig_replace('9F 02 0A B9', '1F 20 03 D5'),
+        .patch_file('fixups/smartae.py', need_tmp_dir=False),
     (
         'vendor/lib64/libBestShot.so',
         'vendor/lib64/libDocBeauty.so',
