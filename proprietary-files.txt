@@ -716,8 +716,8 @@ vendor/firmware/ufs_emer_fw.bin|da39a3ee5e6b4b0d3255bfef95601890afd80709
 vendor/firmware/wifi_cfg|da613f8d255a9bc3c4c11c9941d90ac4fa562bf8
 
 # Gatekeeper
-vendor/bin/hw/android.hardware.gatekeeper@1.0-service;MODULE=android.hardware.gatekeeper@1.0-service.hisi|433eb771b9570fea9dda1452e32e2dddcf77dbdf
-vendor/etc/init/android.hardware.gatekeeper@1.0-service.rc|14787a28eab3435381646dde6e92e6d286a69fe2
+vendor/bin/hw/android.hardware.gatekeeper@1.0-service:vendor/bin/hw/android.hardware.gatekeeper@1.0-service.hisi;MODULE=android.hardware.gatekeeper@1.0-service.hisi|433eb771b9570fea9dda1452e32e2dddcf77dbdf
+vendor/etc/init/android.hardware.gatekeeper@1.0-service.rc:vendor/etc/init/android.hardware.gatekeeper@1.0-service.hisi.rc|14787a28eab3435381646dde6e92e6d286a69fe2|0340c2f27e9e12a87ebc904848809448767b5497
 vendor/lib/hw/gatekeeper.kirin970.so|d3e8a0dda63aa345fb524ef73b939db644b2f1a8
 vendor/lib64/hw/gatekeeper.kirin970.so|31f6dfc5466504c8b8353b2f37151e792b67a121
 
@@ -809,8 +809,8 @@ vendor/lib64/libhisiIrAccess.so|1a3bb0cb713f9345e60ab024859caac13356be14
 vendor/lib64/libir_driver_init.so|3a791accd28c6dd6d8954b60e66ecf80038ff186
 
 # Keymaster
-vendor/bin/hw/android.hardware.keymaster@3.0-service;MODULE=android.hardware.keymaster@3.0-service.hisi|acbdd3265035542ff9e1ec3099ab6bb6746fd7d2
-vendor/etc/init/android.hardware.keymaster@3.0-service.rc|f31babff3abdd73a905fb071671fde5c818d6a11
+vendor/bin/hw/android.hardware.keymaster@3.0-service:vendor/bin/hw/android.hardware.keymaster@3.0-service.hisi;MODULE=android.hardware.keymaster@3.0-service.hisi|acbdd3265035542ff9e1ec3099ab6bb6746fd7d2
+vendor/etc/init/android.hardware.keymaster@3.0-service.rc:vendor/etc/init/android.hardware.keymaster@3.0-service.hisi.rc|f31babff3abdd73a905fb071671fde5c818d6a11|4c653e22a73fb134c17784a11384d13d30a72f98
 vendor/lib/hw/android.hardware.keymaster@3.0-impl.so:vendor/lib/hw/android.hardware.keymaster@3.0-impl-hisi.so;FIX_SONAME|2f0535683e1fb3613fe121007fd94ef91c3790da|703a728540cfe65b66a92bd4ed1f6f968122e0bd
 vendor/lib/hw/keystore.kirin970.so|2ec299831b121cda0d7585df72cba8cd00f20a0b
 vendor/lib64/hw/android.hardware.keymaster@3.0-impl.so:vendor/lib64/hw/android.hardware.keymaster@3.0-impl-hisi.so;FIX_SONAME|acfe74bc850b3248134882b4773b2c412923caa4|207463e546a10629af24c82cc2c1cd64d2eb84f4
@@ -938,8 +938,8 @@ vendor/lib64/vendor.huawei.hardware.radioenhance@1.0.so|3dd05a61191d75f736416596
 vendor/etc/seccomp_policy/mediacodec.policy|fcb0cac9b29706a8f742da48ad2cf89b4955bc71
 
 # Secure Element
-vendor/bin/hw/android.hardware.secure_element@1.0-service;MODULE=android.hardware.secure_element@1.0-service.hisi|d73cae941169c6df78830bda2fdc5f60edd7e553
-vendor/etc/init/android.hardware.secure_element@1.0-service.rc|1aefadf42180a9939378c3a8bba63f9b28b749e7
+vendor/bin/hw/android.hardware.secure_element@1.0-service:vendor/bin/hw/android.hardware.secure_element@1.0-service.hisi;MODULE=android.hardware.secure_element@1.0-service.hisi|d73cae941169c6df78830bda2fdc5f60edd7e553
+vendor/etc/init/android.hardware.secure_element@1.0-service.rc:vendor/etc/init/android.hardware.secure_element@1.0-service.hisi.rc|1aefadf42180a9939378c3a8bba63f9b28b749e7|aa564c83a08c13766c5244d362a2d176ededa257
 vendor/lib/ese_hw_hal.so|f2372108e6dae599a8380f4480965de39ce3355c
 vendor/lib/jcos_client.so|c952c932ebf41bac7bc69c66e4ed117d8ab7d588
 vendor/lib/se_extn_client.so|14968d4e878d292a4fa22e1ea2e961741f8e57e4

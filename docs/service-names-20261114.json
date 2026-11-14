@@ -1,0 +1,45 @@
+{
+  "scope": "staged extraction and packaging metadata; no live source/vendor modification or target build",
+  "extract_utils_revision": "78ba5d58c4b06712e18bb387a2a72eac8fbc8d70",
+  "services": {
+    "android.hardware.gatekeeper@1.0-service.hisi": {
+      "module_and_installed_stem": "android.hardware.gatekeeper@1.0-service.hisi",
+      "elf_sha1": "433eb771b9570fea9dda1452e32e2dddcf77dbdf",
+      "elf_sha256": "a6f47cdf7d2e01d82bad9528b1fe6b50af9c803b6ee015f1387b3e0c925e210a",
+      "elf_bytes_unchanged": true,
+      "rc_input_sha1": "14787a28eab3435381646dde6e92e6d286a69fe2",
+      "rc_input_sha256": "ac31b40c9feabca1c449a5b39ff8e1427fa88c9c911f6a4f96f8674b656d9e40",
+      "rc_output_sha1": "0340c2f27e9e12a87ebc904848809448767b5497",
+      "rc_output_sha256": "258278f5624f3c8f9ea527a92e10926d4fcc6ce4774802d2317708bcec1cdd91",
+      "service_id": "vendor.gatekeeper-1-0",
+      "exec_context": "u:object_r:hal_gatekeeper_default_exec:s0",
+      "live_inputs_equal_backup": true
+    },
+    "android.hardware.keymaster@3.0-service.hisi": {
+      "module_and_installed_stem": "android.hardware.keymaster@3.0-service.hisi",
+      "elf_sha1": "acbdd3265035542ff9e1ec3099ab6bb6746fd7d2",
+      "elf_sha256": "d9c8671beefe80bb695ee907cc15f1ff229d0f96f4cba567aa32bece0bd6776d",
+      "elf_bytes_unchanged": true,
+      "rc_input_sha1": "f31babff3abdd73a905fb071671fde5c818d6a11",
+      "rc_input_sha256": "101a172606c97540b1226efbc9af55e989e6309456139ce439d73f94fcacf3ce",
+      "rc_output_sha1": "4c653e22a73fb134c17784a11384d13d30a72f98",
+      "rc_output_sha256": "931c7f28b319a03d3d49cf1e3b3bbc9e77b021dcdd1c01a8086197698657ceea",
+      "service_id": "vendor.keymaster-3-0",
+      "exec_context": "u:object_r:hal_keymaster_default_exec:s0",
+      "live_inputs_equal_backup": true
+    },
+    "android.hardware.secure_element@1.0-service.hisi": {
+      "module_and_installed_stem": "android.hardware.secure_element@1.0-service.hisi",
+      "elf_sha1": "d73cae941169c6df78830bda2fdc5f60edd7e553",
+      "elf_sha256": "712a01b65bc4ae6477c9cb85dade6aa82af6cc31fb35446851c45d1165348346",
+      "elf_bytes_unchanged": true,
+      "rc_input_sha1": "1aefadf42180a9939378c3a8bba63f9b28b749e7",
+      "rc_input_sha256": "03c966c813bc8df11d1084d8aef6498529fc153726a6fbddbd6c90e10b7e894a",
+      "rc_output_sha1": "aa564c83a08c13766c5244d362a2d176ededa257",
+      "rc_output_sha256": "e2fd97212bfe3e387d0b89f5b262ae55b16e2c3c6974ec8d48fb9e97f983548d",
+      "service_id": "secure_element_hal_service",
+      "exec_context": "u:object_r:hal_secure_element_default_exec:s0",
+      "live_inputs_equal_backup": true
+    }
+  }
+}

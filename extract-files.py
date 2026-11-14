@@ -21,6 +21,12 @@ namespace_imports = [
 ]
 
 blob_fixups: blob_fixups_user_type = {
+    (
+        'vendor/etc/init/android.hardware.gatekeeper@1.0-service.hisi.rc',
+        'vendor/etc/init/android.hardware.keymaster@3.0-service.hisi.rc',
+        'vendor/etc/init/android.hardware.secure_element@1.0-service.hisi.rc',
+    ): blob_fixup()
+        .patch_file('fixups/hisi_services.py', need_tmp_dir=False),
     'vendor/etc/init/android.hardware.drm@1.2-service.widevine.rc': blob_fixup()
         .regex_replace(r'preavs', 'vendor'),
     'vendor/etc/init/vendor.huawei.hardware.biometrics.fingerprint@2.2-service.rc': blob_fixup()

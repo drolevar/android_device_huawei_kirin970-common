@@ -128,6 +128,7 @@ VENDOR_SECURITY_PATCH := 2022-05-01
 
 # SEPolicy
 include hardware/huawei/sepolicy/hisi/SEPolicy.mk
+BOARD_VENDOR_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy/vendor
 
 # Wifi
 BOARD_HOSTAPD_DRIVER := NL80211
