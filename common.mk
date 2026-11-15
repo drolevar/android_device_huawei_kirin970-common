@@ -138,6 +138,7 @@ PRODUCT_PACKAGES += \
     init.post-fs-data.rc \
     init.recovery.kirin970.rc \
     init.tee.rc \
+    init.tee.core.rc \
     init.vowifi.rc \
     ueventd.kirin970.rc
 

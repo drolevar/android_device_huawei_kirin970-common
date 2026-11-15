@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: 2026 The LineageOS Project
+# SPDX-License-Identifier: Apache-2.0
+
+# Legacy TEE paths use core_data_file_type and must be initialized by core init.
+# Keep the inherited modes, ownership and mkdir flags when moving these actions.
+on post-fs-data
+    mkdir /data/sec_storage_data 0700 system system encryption=None
+    restorecon /data/sec_storage_data
+    mkdir /data/sec_storage_data_users 0700 system system encryption=None
+    restorecon /data/sec_storage_data_users
