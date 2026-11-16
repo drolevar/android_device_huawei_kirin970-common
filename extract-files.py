@@ -28,7 +28,16 @@ blob_fixups: blob_fixups_user_type = {
     ): blob_fixup()
         .patch_file('fixups/hisi_services.py', need_tmp_dir=False),
     'vendor/etc/init/android.hardware.drm@1.2-service.widevine.rc': blob_fixup()
-        .regex_replace(r'preavs', 'vendor'),
+        # Relocate only the stock service paths; retain its migration action.
+        .regex_replace(
+            r'(?m)^(service[ \t]+vendor\.drm-widevine-hal-1-2[ \t]+)/vendor/preavs/bin/hw/'
+            r'(android\.hardware\.drm@1\.2-service\.widevine)(?=[ \t\r]*$)',
+            r'\1/vendor/bin/hw/\2',
+        )
+        .regex_replace(
+            r'(?m)^([ \t]+setenv[ \t]+LD_LIBRARY_PATH[ \t]+)/vendor/preavs/lib(?=[ \t\r]*$)',
+            r'\1/vendor/lib',
+        ),
     'vendor/etc/init/vendor.huawei.hardware.biometrics.fingerprint@2.2-service.rc': blob_fixup()
         .regex_replace(
             r'    interface vendor\.huawei\.hardware\.biometrics\.fingerprint@2\.2::IExtBiometricsFingerprint default',

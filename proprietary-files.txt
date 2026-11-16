@@ -586,7 +586,7 @@ vendor/lib64/vendor.huawei.hardware.hwdisplay@1.1.so|d89520c13537b1a202ee4ff6407
 # DRM (widevine)
 preavs/bin/hw/android.hardware.drm@1.2-service.widevine:vendor/bin/hw/android.hardware.drm@1.2-service.widevine|69c0b631a300d709076f2b0620e8024e11a53cb2
 preavs/lib/libwvhidl.so:vendor/lib/libwvhidl.so|e002093ae2d49a93bcbed689d370fcf135cb2320
-vendor/etc/init/android.hardware.drm@1.2-service.widevine.rc|ec52d356861895656488c6fb6a30b5f142db10d4|d87d7852d38ef135fe366715130f9d988847c22c
+vendor/etc/init/android.hardware.drm@1.2-service.widevine.rc|ec52d356861895656488c6fb6a30b5f142db10d4|915113ed6bb6a1d629b69a429037afcd5203dd2b
 
 # Fingerprint
 vendor/bin/hw/vendor.huawei.hardware.biometrics.fingerprint@2.2-service|c01c604a22ad4eb11ba70239904b969beeeb272e
