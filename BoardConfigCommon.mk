@@ -69,9 +69,19 @@ TARGET_KERNEL_SOURCE := kernel/huawei/kirin970
 TARGET_KERNEL_CONFIG := merge_kirin970_defconfig
 TARGET_KERNEL_CLANG_VERSION := r416183b
 TARGET_KERNEL_CLANG_PATH := $(abspath .)/prebuilts/clang/kernel/$(HOST_PREBUILT_TAG)/clang-$(TARGET_KERNEL_CLANG_VERSION)
-TARGET_KERNEL_LLVM_BINUTILS := false
+KERNEL_CC := CC="$(TARGET_KERNEL_CLANG_PATH)/bin/clang"
+KERNEL_CROSS_COMPILE := \
+    CROSS_COMPILE=$(abspath .)/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android- \
+    CROSS_COMPILE_ARM32=$(abspath .)/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin/arm-linux-androidkernel- \
+    CROSS_COMPILE_COMPAT=$(abspath .)/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin/arm-linux-androidkernel-
 TARGET_KERNEL_ADDITIONAL_FLAGS := \
-    HOSTCFLAGS="-fuse-ld=lld -Wno-unused-command-line-argument"
+    -j8 \
+    LLVM= \
+    LLVM_IAS=0 \
+    HOSTCC="$(TARGET_KERNEL_CLANG_PATH)/bin/clang" \
+    HOSTCXX="$(TARGET_KERNEL_CLANG_PATH)/bin/clang++" \
+    HOSTCFLAGS="-fuse-ld=lld -Wno-unused-command-line-argument" \
+    HOSTLDFLAGS="-L/usr/lib/x86_64-linux-gnu -L/usr/lib64 -fuse-ld=lld"
 
 # Metadata
 BOARD_USES_METADATA_PARTITION := true
