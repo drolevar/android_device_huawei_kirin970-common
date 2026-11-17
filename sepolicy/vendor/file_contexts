@@ -1,3 +1,15 @@
 # Same exec types as the original unsuffixed platform service paths.
 /(vendor|system/vendor)/bin/hw/android\.hardware\.gatekeeper@1\.0-service\.hisi u:object_r:hal_gatekeeper_default_exec:s0
 /(vendor|system/vendor)/bin/hw/android\.hardware\.keymaster@3\.0-service\.hisi u:object_r:hal_keymaster_default_exec:s0
+
+# Kirin 970 UFS (ff3c0000.ufs) and swap block devices.
+# Physical cache (sdd65, 128 MiB) backs /metadata on LineageOS 24.
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/(boot|kernel|ramdisk) u:object_r:boot_block_device:s0
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/cache u:object_r:metadata_block_device:s0
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/(dto|dtbo) u:object_r:dtbo_block_device:s0
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/frp u:object_r:frp_block_device:s0
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/misc u:object_r:misc_block_device:s0
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/recovery_ramdisk u:object_r:recovery_block_device:s0
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/super u:object_r:super_block_device:s0
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/userdata u:object_r:userdata_block_device:s0
+/dev/block/zram0 u:object_r:swap_block_device:s0
