@@ -28,7 +28,18 @@ blob_fixups: blob_fixups_user_type = {
     ): blob_fixup()
         .patch_file('fixups/hisi_services.py', need_tmp_dir=False),
     'vendor/etc/init/android.hardware.drm@1.2-service.widevine.rc': blob_fixup()
-        # Relocate only the stock service paths; retain its migration action.
+        # Relocate stock preavs service paths and drop the obsolete, absent
+        # Android 8->9 /system/bin/move_widevine_data.sh migration helper while
+        # retaining mkdir /data/vendor/mediadrm.
+        .regex_replace(
+            r'(?m)^[ \t]+start[ \t]+vendor\.move_data_sh[ \t]*\r?\n',
+            '',
+        )
+        .regex_replace(
+            r'(?m)^service[ \t]+vendor\.move_data_sh[ \t]+/system/bin/move_widevine_data\.sh[ \t]*\r?\n'
+            r'(?:[ \t]+[^\s\r\n][^\r\n]*(?:\r?\n|$))*(?:[ \t]*\r?\n)?',
+            '',
+        )
         .regex_replace(
             r'(?m)^(service[ \t]+vendor\.drm-widevine-hal-1-2[ \t]+)/vendor/preavs/bin/hw/'
             r'(android\.hardware\.drm@1\.2-service\.widevine)(?=[ \t\r]*$)',
