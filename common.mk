@@ -255,6 +255,11 @@ PRODUCT_PACKAGES += \
     android.hardware.vibrator@1.0-impl \
     android.hardware.vibrator@1.0-service
 
+# VINTF
+PRODUCT_PACKAGES += \
+    framework_compatibility_matrix.5.blanc.xml \
+    framework_compatibility_matrix.6.blanc.xml
+
 # WiFi
 PRODUCT_PACKAGES += \
     android.hardware.wifi-service \
