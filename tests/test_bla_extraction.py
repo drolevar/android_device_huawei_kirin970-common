@@ -3,6 +3,10 @@ from pathlib import Path
 import unittest
 import importlib.util
 import hashlib
+import io
+import os
+import tempfile
+from types import SimpleNamespace
 from unittest import mock
 from extract_utils.file import File, FileArgs
 
@@ -17,8 +21,33 @@ class BlaExtractionTests(unittest.TestCase):
 
     def test_opaque_xml_is_copied_without_xml_schema_interpretation(self):
         entries = {file.src: file for file in self.files()}
-        for name in ("vendor/etc/native_packages.xml", "vendor/etc/modemConfig/observe_config_encryt.xml"):
-            self.assertIn(FileArgs.MAKE_COPY_RULE_ONLY, entries[name].args)
+        expected_hashes = {
+            "vendor/etc/native_packages.xml": "9c348ade1ef172f5765f74406fdc8fe19cc5d71d",
+            "vendor/etc/modemConfig/observe_config_encryt.xml": "fffee4b4317b594bdbb36cfc4d7591218455ce07",
+        }
+        for name, expected_hash in expected_hashes.items():
+            self.assertIn(FileArgs.EXTRACT_ONLY, entries[name].args)
+            self.assertNotIn(FileArgs.MAKE_COPY_RULE_ONLY, entries[name].args)
+            self.assertEqual(entries[name].hash, expected_hash)
+
+        spec = importlib.util.spec_from_file_location("common_recipe", ROOT / "extract-files.py")
+        recipe = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(recipe)
+        ctx = SimpleNamespace(bp_out=io.StringIO(), product_mk_out=io.StringIO())
+        recipe.write_opaque_xml_packages(ctx, None)
+        bp = ctx.bp_out.getvalue()
+        mk = ctx.product_mk_out.getvalue()
+        self.assertIn('prebuilt_etc {', bp)
+        self.assertNotIn('prebuilt_etc_xml', bp)
+        self.assertIn('src: "proprietary/vendor/etc/modemConfig/observe_config_encryt.xml"', bp)
+        self.assertIn('sub_dir: "modemConfig"', bp)
+        self.assertIn('src: "proprietary/vendor/etc/native_packages.xml"', bp)
+        self.assertEqual(bp.count('filename_from_src: true'), 2)
+        self.assertEqual(bp.count('soc_specific: true'), 2)
+        self.assertNotIn('PRODUCT_COPY_FILES', mk)
+        self.assertIn('PRODUCT_PACKAGES +=', mk)
+        self.assertIn('observe_config_encryt.xml', mk)
+        self.assertIn('native_packages.xml', mk)
 
     def test_each_declared_fixup_has_a_verified_output_pin(self):
         spec = importlib.util.spec_from_file_location("common_recipe", ROOT / "extract-files.py")

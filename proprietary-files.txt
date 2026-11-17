@@ -855,7 +855,7 @@ vendor/etc/modemConfig/hids_ue_msg.cfg|51476aba23c2636b80a518c0dd57618591b78169
 vendor/etc/modemConfig/mipi_sample.cfg|3f798040f4e2d8e80d268bf11b80368713cf33aa
 vendor/etc/modemConfig/modemtool_ca.crt|e81904bba52662b2cb86c66f9a8b9c469d689bcf
 vendor/etc/modemConfig/modemtool_client.pem|78c286ab103d7b85a86863e23663d6491b1d7632
--vendor/etc/modemConfig/observe_config_encryt.xml;MAKE_COPY_RULE_ONLY|fffee4b4317b594bdbb36cfc4d7591218455ce07
+vendor/etc/modemConfig/observe_config_encryt.xml;EXTRACT_ONLY|fffee4b4317b594bdbb36cfc4d7591218455ce07
 vendor/etc/modemConfig/rcc_for_ssi_unlock.xml|9d3c6f5f685b32b61ea8129f1e8652997f06950e
 vendor/etc/modemConfig/ssi_sample.cfg|2ae0b4dd766360112f61d9b7f8cdd7d26906ff93
 vendor/etc/factory_modem.cfg|a2a6e84d067e387eed85cc75f0f9fd909ed369d2
@@ -997,7 +997,7 @@ vendor/bin/hisi_hdcp13_fac.sec|aae0bf517e0ecd0b053e49700597345355c8d584
 vendor/bin/hisi_hdcp_user.sec|92e0fd2b975798d96aa645178cb5fbd7b775f754
 vendor/bin/teecd|4b4257f5bf457898b98ccf3a8bae550a9f088d5a
 vendor/etc/init/vendor.huawei.hardware.libteec@3.0-service.rc|fd102f2e7a0e6c07e5117c55756762b4f52e5faa
--vendor/etc/native_packages.xml;MAKE_COPY_RULE_ONLY|9c348ade1ef172f5765f74406fdc8fe19cc5d71d
+vendor/etc/native_packages.xml;EXTRACT_ONLY|9c348ade1ef172f5765f74406fdc8fe19cc5d71d
 vendor/lib/hw/vendor.huawei.hardware.libteec@3.0-impl.so|584556e5f44cfe07ed5c0a63a7213c4a6605b22b
 vendor/lib/libc_secshared.so|9840d8fc921986b9651f54e38a4215cf8b461bbf
 vendor/lib/libteec_eid.so|e22d6eaa96e9dcd33cc0674c4a5cddaa79267bbf

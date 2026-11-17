@@ -128,12 +128,42 @@ blob_fixups: blob_fixups_user_type = {
         .add_needed('liblog.so'),
 }  # fmt: skip
 
+def write_opaque_xml_packages(ctx, _packages_ctx):
+    ctx.bp_out.write(
+        '\nprebuilt_etc {\n'
+        '    name: "observe_config_encryt.xml",\n'
+        '    owner: "huawei",\n'
+        '    src: "proprietary/vendor/etc/modemConfig/observe_config_encryt.xml",\n'
+        '    filename_from_src: true,\n'
+        '    sub_dir: "modemConfig",\n'
+        '    soc_specific: true,\n'
+        '}\n'
+        '\nprebuilt_etc {\n'
+        '    name: "native_packages.xml",\n'
+        '    owner: "huawei",\n'
+        '    src: "proprietary/vendor/etc/native_packages.xml",\n'
+        '    filename_from_src: true,\n'
+        '    soc_specific: true,\n'
+        '}\n'
+    )
+    ctx.product_mk_out.write(
+        '\nPRODUCT_PACKAGES += \\\n'
+        '    observe_config_encryt.xml \\\n'
+        '    native_packages.xml\n'
+    )
+
+
 module = ExtractUtilsModule(
     'kirin970-common',
     'huawei',
     blob_fixups=blob_fixups,
     lib_fixups=lib_fixups,
     namespace_imports=namespace_imports,
+    skip_main_proprietary_file=True,
+)
+module.add_proprietary_file(
+    'proprietary-files.txt',
+    post_makefile_generation_fn=write_opaque_xml_packages,
 )
 
 if __name__ == '__main__':
