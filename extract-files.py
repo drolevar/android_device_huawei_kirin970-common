@@ -126,6 +126,8 @@ blob_fixups: blob_fixups_user_type = {
         .clear_symbol_version('AHardwareBuffer_release'),
     'vendor/lib64/libdcamera_effect.so': blob_fixup()
         .add_needed('liblog.so'),
+    'vendor/bin/gpsdaemon': blob_fixup()
+        .add_needed('libshim_libxml2.so'),
 }  # fmt: skip
 
 def write_opaque_xml_packages(ctx, _packages_ctx):

@@ -229,6 +229,7 @@ PRODUCT_SOONG_NAMESPACES += \
     bootable/deprecated-ota \
     hardware/google/interfaces \
     hardware/google/pixel \
+    hardware/google/pixel/power-libperfmgr \
     hardware/lineage/interfaces/power-libperfmgr \
     hardware/huawei \
     hardware/huawei/libbt-vendor
