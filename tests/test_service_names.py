@@ -63,12 +63,28 @@ class ServiceNamesTests(unittest.TestCase):
             self.assertEqual(matches, {rec["exec_context"]}, rec["exec_path"])
 
     def test_init_debug_core_rc_and_vendor_file_contexts_cleanup(self):
+        import subprocess
         fc_text = (ROOT / "sepolicy/vendor/file_contexts").read_text()
         self.assertNotIn(".hisi", fc_text)
         debug_rc = (ROOT / "init/init.debug.core.rc").read_text()
-        self.assertIn("apexd.status=activated", debug_rc)
+        self.assertIn("apexd.status=activated && property:ro.debuggable=1", debug_rc)
         self.assertIn("setprop sys.usb.config adb", debug_rc)
-        self.assertIn("init.debug.core.rc", (ROOT / "common.mk").read_text())
+        self.assertIn("on post-fs && property:ro.debuggable=1", debug_rc)
+        self.assertIn("service blanc_boot_diag /system_ext/bin/blanc-boot-diag.sh", debug_rc)
+        common_mk = (ROOT / "common.mk").read_text()
+        pkg_blocks = re.findall(r"(?m)^PRODUCT_PACKAGES\s*\+=\s*(?:[^\n]*\\\n)*[^\n]*", common_mk)
+        for blk in pkg_blocks:
+            self.assertNotIn("init.debug.core.rc", blk)
+            self.assertNotIn("blanc-boot-diag.sh", blk)
+        dbg_match = re.search(r"(?m)^PRODUCT_PACKAGES_DEBUG\s*\+=\s*(?:[^\n]*\\\n)*[^\n]*", common_mk)
+        self.assertIsNotNone(dbg_match)
+        self.assertIn("init.debug.core.rc", dbg_match.group())
+        self.assertIn("blanc-boot-diag.sh", dbg_match.group())
+        sys_prop = (ROOT / "system.prop").read_text().splitlines()
+        self.assertIn("ro.bpf.kver_override=5.10.199", sys_prop)
+        sh_path = ROOT / "init/blanc-boot-diag.sh"
+        self.assertTrue(sh_path.is_file())
+        subprocess.run(["sh", "-n", str(sh_path)], check=True)
 
     def test_extracted_vendor_tree_matches_stock_and_uses_prefer_true(self):
         source = os.environ.get("BLA_ORIGINAL_FILESYSTEMS")

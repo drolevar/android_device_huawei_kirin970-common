@@ -1,6 +1,16 @@
 # SPDX-FileCopyrightText: 2026 The LineageOS Project
 # SPDX-License-Identifier: Apache-2.0
 
+on post-fs && property:ro.debuggable=1
+    start blanc_boot_diag
+
+service blanc_boot_diag /system_ext/bin/blanc-boot-diag.sh
+    user root
+    group root system log readproc
+    seclabel u:r:su:s0
+    disabled
+    oneshot
+
 # Bring-up diagnostics: start USB adbd as soon as non-bootstrap APEXes
 # (including com.android.adbd) activate during post-fs-data on debuggable builds.
 on property:apexd.status=activated && property:ro.debuggable=1
