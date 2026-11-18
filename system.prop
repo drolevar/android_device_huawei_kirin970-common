@@ -1,0 +1,33 @@
+#
+# SPDX-FileCopyrightText: The LineageOS Project
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# Huawei
+persist.rog_feature=1
+
+# Media
+persist.kirin.media.offload.enable=true
+persist.kirin.media.hires.enable=true
+persist.kirin.media.lowlatency.enable=false
+persist.kirin.media.usbvoice.enable=true
+persist.kirin.media.usbvoice.name=USB-Audio - HUAWEI GLASS
+
+# Netflix
+ro.netflix.bsp_rev=KIRIN970-15244-1
+
+# Platform
+ro.kirin.product.platform=kirin970
+ro.comp.chipset_version=Chipset-boston 102.0.0.001(1ISW)
+
+# RIL
+persist.radio.dualltecap=1
+
+# Sensors
+use_sensorhub_labc=false
+
+# Touch
+persist.kirin.touch_vsync_opt=1
+
+# VoLTE
+ro.config.hw_volte_on=true

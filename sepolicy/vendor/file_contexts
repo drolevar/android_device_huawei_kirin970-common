@@ -13,3 +13,14 @@
 /dev/block/(platform/ff3c0000\.ufs/)?by-name/super u:object_r:super_block_device:s0
 /dev/block/(platform/ff3c0000\.ufs/)?by-name/userdata u:object_r:userdata_block_device:s0
 /dev/block/zram0 u:object_r:swap_block_device:s0
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/nvme u:object_r:vendor_nve_block_device:s0
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/oeminfo u:object_r:vendor_oeminfo_nvm_device:s0
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/certification u:object_r:vendor_certification_device:s0
+/dev/block/sdd5 u:object_r:vendor_certification_device:s0
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/secure_storage u:object_r:vendor_teecd_blkdev:s0
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/splash2 u:object_r:vendor_splash2_block_device:s0
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/hisee_(fs|img|encos) u:object_r:vendor_hisee_blkdev:s0
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/(bootfail_info|rrecord|dfx) u:object_r:vendor_bfm_block_device:s0
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/(modem_fw|modem_om|modem_secure|modem_driver|modemnvm_backup|modemnvm_cust|modemnvm_factory|modemnvm_img|modemnvm_system|modemnvm_update) u:object_r:vendor_modem_block_device:s0
+/dev/block/sd[a-e] u:object_r:vendor_ufs_block_device:s0
+/sys/devices/platform/ff3c0000\.ufs(/.*)? u:object_r:sysfs_devices_block:s0

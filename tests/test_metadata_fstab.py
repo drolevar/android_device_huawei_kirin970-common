@@ -128,6 +128,15 @@ class MetadataFstabTests(unittest.TestCase):
             "boot": "boot_block_device",
             "kernel": "boot_block_device",
             "ramdisk": "boot_block_device",
+            "nvme": "vendor_nve_block_device",
+            "oeminfo": "vendor_oeminfo_nvm_device",
+            "certification": "vendor_certification_device",
+            "secure_storage": "vendor_teecd_blkdev",
+            "splash2": "vendor_splash2_block_device",
+            "hisee_fs": "vendor_hisee_blkdev",
+            "rrecord": "vendor_bfm_block_device",
+            "modem_fw": "vendor_modem_block_device",
+            "modemnvm_img": "vendor_modem_block_device",
         }
         for name, expected_type in expected_by_name.items():
             for prefix in ("/dev/block/by-name/", "/dev/block/platform/ff3c0000.ufs/by-name/"):
@@ -135,6 +144,57 @@ class MetadataFstabTests(unittest.TestCase):
                 with self.subTest(path=path):
                     self.assertEqual(lookup_context_type(rules, path), expected_type)
         self.assertEqual(lookup_context_type(rules, "/dev/block/zram0"), "swap_block_device")
+        self.assertEqual(lookup_context_type(rules, "/dev/block/sdd5"), "vendor_certification_device")
+        self.assertEqual(lookup_context_type(rules, "/dev/block/sdd"), "vendor_ufs_block_device")
+        self.assertEqual(
+            lookup_context_type(rules, "/sys/devices/platform/ff3c0000.ufs/host0/target0:0:0/0:0:0:3/block/sdd/sdd70/partition"),
+            "sysfs_devices_block",
+        )
+
+    def test_writable_ext4_mounts_use_xattr_and_readonly_mounts_use_context(self):
+        kirin_entries = {e["mnt_point"]: e for e in parse_fstab(ROOT / "init/fstab.kirin970")}
+        for mnt in ("/splash2", "/sec_storage"):
+            with self.subTest(mnt=mnt):
+                self.assertNotIn("context=", kirin_entries[mnt]["mnt_flags"])
+                self.assertNotIn("crypt", kirin_entries[mnt]["fs_mgr_flags"])
+                self.assertIn("check", kirin_entries[mnt]["fs_mgr_flags"])
+        self.assertIn("context=u:object_r:hisee_data_file:s0", kirin_entries["/mnt/hisee_fs"]["mnt_flags"])
+
+        modem_entries = {e["mnt_point"]: e for e in parse_fstab(ROOT / "init/fstab.modem")}
+        for mnt in ("/mnt/modem/modem_secure", "/modem_log", "/mnt/modem/mnvm2:0"):
+            with self.subTest(mnt=mnt):
+                self.assertNotIn("context=", modem_entries[mnt]["mnt_flags"])
+        self.assertIn("context=u:object_r:modem_vendor_file:s0", modem_entries["/vendor/modem/modem_fw"]["mnt_flags"])
+
+    def test_system_properties_separated_from_vendor_prop(self):
+        moved = {
+            "persist.rog_feature",
+            "persist.kirin.media.offload.enable",
+            "persist.kirin.media.hires.enable",
+            "persist.kirin.media.lowlatency.enable",
+            "persist.kirin.media.usbvoice.enable",
+            "persist.kirin.media.usbvoice.name",
+            "ro.netflix.bsp_rev",
+            "ro.kirin.product.platform",
+            "ro.comp.chipset_version",
+            "persist.radio.dualltecap",
+            "use_sensorhub_labc",
+            "persist.kirin.touch_vsync_opt",
+            "ro.config.hw_volte_on",
+        }
+        sys_keys = {
+            line.split("=", 1)[0].strip()
+            for line in (ROOT / "system.prop").read_text().splitlines()
+            if "=" in line and not line.lstrip().startswith("#")
+        }
+        vnd_keys = {
+            line.split("=", 1)[0].strip()
+            for line in (ROOT / "vendor.prop").read_text().splitlines()
+            if "=" in line and not line.lstrip().startswith("#")
+        }
+        self.assertEqual(sys_keys, moved)
+        self.assertEqual(vnd_keys & moved, set())
+        self.assertRegex((ROOT / "BoardConfigCommon.mk").read_text(), r"(?m)^TARGET_SYSTEM_PROP\s*\+=\s*\$\(COMMON_PATH\)/system\.prop\b")
 
 
 if __name__ == "__main__":
