@@ -1,58 +1,41 @@
-# Unique filenames for the three stock security services
+# Exact stock filenames for the three Kirin 970 security services
 
-`MODULE=...service.hisi` previously changed only the generated module name;
-extract-utils retained the unsuffixed installed stem. The stock and generic
-modules therefore generated the same vendor/SYMBOLS output paths. The extraction
-recipe now copies the three stock executables to their existing `.hisi` module
-names and copies their rc files to matching `.hisi.rc` destinations.
+Huawei `.225` TrustedCore (`/vendor/bin/teecd`) and TEEOS (`native_packages.xml`
+plus signed `.sec` TA allowlists) authenticate native CA callers using their
+literal `/proc/<pid>/cmdline` executable path. Disassembly of `vendor/bin/teecd`
+(`0x97b4..0x981c`) reads `/proc/%d/cmdline` directly and rejects suffixed paths
+such as `/vendor/bin/hw/android.hardware.keymaster@3.0-service.hisi`, stalling
+`vold` FBE `installkey /data` on `/data/unencrypted/temp` before `keymaster_key_blob`.
 
-`fixups/hisi_services.py` requires the exact measured stock SHA-256, exactly one
-original path as a service executable token, and the pinned output SHA-1/SHA-256.
-It changes only that executable token. Service IDs, classes, users, groups,
-interface declarations and all other rc bytes are unchanged. All three ELF
-payloads remain byte-identical to their original BLA inputs; existing ELF input
-pins and strict generated dependency/ELF checks are retained. No VINTF source,
-HAL implementation, or generic secure-element implementation is substituted.
-
-The selected extract-utils supports `OVERRIDES` in its parser but emits it only
-for APK packages, not `cc_prebuilt_binary`. No ineffective override flag is added.
-The generated vendor product still selects the same three `.hisi` modules. This
-fix makes their filesystem destinations disjoint from generic build outputs.
+Earlier extraction workarounds used `;MODULE=...service.hisi` + `:...service.hisi`
+and `fixups/hisi_services.py`, which changed `/proc/<pid>/cmdline` and prevented
+Soong `PrebuiltMutator` from pairing with same-named AOSP `cc_binary` modules.
+Restoring the exact unsuffixed `.225` filenames and `.rc` files in
+`proprietary-files.txt` generates same-name `cc_prebuilt_binary` definitions with
+`prefer: true`, `relative_install_path: "hw"`, and `soc_specific: true`
+(matching `rild`). Soong's `PrebuiltMutator` replaces any same-named AOSP source
+module (`HideFromMake()` + `SkipInstall()`), keeping `/vendor/bin/hw/...` and
+`/vendor/etc/init/...` byte-identical to stock `.225`.
 
 ## SELinux labels
 
-`BoardConfigCommon.mk` already includes
-`hardware/huawei/sepolicy/hisi/SEPolicy.mk`. The existing hardware vendor
-`file_contexts` already labels the renamed secure-element path as
-`hal_secure_element_default_exec`. Two precise rules in the new common vendor
-policy directory give gatekeeper/keymaster their original
-`hal_gatekeeper_default_exec` / `hal_keymaster_default_exec` types.
-The patterns contain single regex escapes and match the literal new filenames.
-No domains, allow rules, permissive settings, or policy-check exceptions are added.
+AOSP `system/sepolicy/vendor/file_contexts` already maps all three exact
+unsuffixed paths (`/vendor/bin/hw/android.hardware.{gatekeeper@1.0,keymaster@3.0,secure_element@1.0}-service`)
+to their required `hal_{gatekeeper,keymaster,secure_element}_default_exec` types,
+matching the `u:r:hal_keymaster_default:s0`, `u:r:hal_gatekeeper_default:s0`,
+and `u:r:hal_secure_element_default:s0` domain transitions.
 
-## Verification (2026-11-14)
+## Verification
 
-Before replay, the existing generated common (541 MiB) and blanc (129 MiB) vendor
-trees were copied to ignored cache storage. Full common extraction then ran from
-the original filesystems into a separate ignored staging directory using the
-selected extract-utils. Live source/vendor inputs were not changed during the
-parent build. The three live executables/rc inputs still match the backup.
-
-Thirteen owning-project tests passed with the measured source and staging output,
-including missing/ambiguous/non-service path rejection, changed-input rejection,
-the actual extractor's module/stem behavior, all three original/new SELinux type
-matches, measured rc hash replay, generated copy destinations, and unchanged ELF
-bytes. [service-names-20261114.json](service-names-20261114.json) records hashes and
-metadata without proprietary payloads.
+`tests/test_service_names.py` verifies `proprietary-files.txt`, absence of
+`.hisi` overrides, exact AOSP `file_contexts` resolution, and (when
+`BLA_ORIGINAL_FILESYSTEMS` / `BLA_EXTRACTED_VENDOR` are set) byte-identical
+stock ELFs and `.rc` files plus same-name `prefer: true` Soong modules without
+`stem: "*.hisi"`.
 
 ```sh
 PYTHONPATH=/path/to/platform/tools/extract-utils \
 BLA_ORIGINAL_FILESYSTEMS=/path/to/original-filesystems \
-BLA_EXTRACTED_VENDOR=/path/to/staged/kirin970-common \
+BLA_EXTRACTED_VENDOR=/path/to/vendor/kirin970-common \
   python3 -B -m unittest discover -s tests -v
 ```
-
-Without the two BLA variables, the private-input replay tests are skipped. Main
-must publish/select the source, regenerate the live vendor tree after the active
-build ends, and retry the actual graph/packaging build. This does not claim a
-completed target build, policy compilation, or service/runtime validation.

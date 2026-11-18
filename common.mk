@@ -139,6 +139,7 @@ PRODUCT_PACKAGES += \
     init.recovery.kirin970.rc \
     init.tee.rc \
     init.tee.core.rc \
+    init.debug.core.rc \
     init.vowifi.rc \
     ueventd.kirin970.rc
 

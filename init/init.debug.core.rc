@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2026 The LineageOS Project
+# SPDX-License-Identifier: Apache-2.0
+
+# Bring-up diagnostics: start USB adbd as soon as non-bootstrap APEXes
+# (including com.android.adbd) activate during post-fs-data on debuggable builds.
+on property:apexd.status=activated && property:ro.debuggable=1
+    setprop sys.usb.config adb
