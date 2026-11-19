@@ -124,6 +124,13 @@ blob_fixups: blob_fixups_user_type = {
         .add_needed('libshim_libxml2.so'),
     'vendor/bin/CameraDaemon': blob_fixup()
         .add_needed('libshim_camera_tls.so'),
+    (
+        'vendor/lib/hw/hicam.hal.bz.so',
+        'vendor/lib/libcamera_perftrace.so',
+        'vendor/lib64/hw/hicam.hal.bz.so',
+        'vendor/lib64/libcamera_perftrace.so',
+    ): blob_fixup()
+        .replace_needed('libtinyxml2.so', 'libtinyxml2-v29.so'),
 }  # fmt: skip
 
 def write_opaque_xml_packages(ctx, _packages_ctx):

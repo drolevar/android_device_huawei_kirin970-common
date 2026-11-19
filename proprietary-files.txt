@@ -45,7 +45,7 @@ vendor/bin/hw/vendor.huawei.hardware.camera.factory@1.1-service|3f57fe3bbfb1f265
 vendor/bin/CameraDaemon|ce901f10bf7222acb28c063beee2f44dc0fadcc9|ac66b0af2810474d5e466ce54cb58f3cc9334b5b
 vendor/etc/init/vendor.huawei.hardware.camera.factory@1.1-service.rc|75cd57f6453167c2b5a692fb4139d50a09561604
 vendor/lib/hw/CameraFactoryService.so|b3489b2c29821434c4bccd096e55fa7c317e84c9
-vendor/lib/hw/hicam.hal.bz.so|b6dfb8e01516bc594ab2ef3a65afe9051e742f51
+vendor/lib/hw/hicam.hal.bz.so|b6dfb8e01516bc594ab2ef3a65afe9051e742f51|0af4c970864c8f7fc6ab710b04dd171d05bdc172
 vendor/lib/hw/hicam.hal.service.so|55609eed8323be4e6354ea7e73bd82d303130a1f
 vendor/lib/hw/vendor.huawei.hardware.camera.factory@1.0-impl.so|bdcca1f7f468e39240a4e02b8c9364f9b9ef17fe
 vendor/lib/hwcam/hwcam.ddt.so|4dae7b51580726b8a31f068c16c0b1623e833a50
@@ -54,7 +54,7 @@ vendor/lib/libAfStatCalc.so|51ff8142c518e307ba69d87dbd4ab33f3959b96b
 vendor/lib/libIPU12DriverUser.so|cd4a80700b2981dc911ede00560bf8cab7cd17a5
 vendor/lib/libai_client.so|dc7cf3c7ac7eb0c7d4b8a4a459e3b7ef35bf8cf3
 vendor/lib/libc_sec.so|d220abf8be205ffa0b55314f82a55a57087808b8
-vendor/lib/libcamera_perftrace.so|d70ccd5ea591e3582bec9afc487eb2b1169d93a6
+vendor/lib/libcamera_perftrace.so|d70ccd5ea591e3582bec9afc487eb2b1169d93a6|acc10d0e52dc965754b549ef45351e1431a0130b
 vendor/lib/libcamerabuffer.so|fb272c4829a3460ef24434e4f4fe53b2e9154668
 vendor/lib/libcie.so|a4f40396f7a53a6ba9d3e81182b2e5f31a2a7f0d
 vendor/lib/libhiai_client.so|850121f55b946c4a1bbcc6d978ac14e18d378465
@@ -90,7 +90,7 @@ vendor/lib/vendor.huawei.hardware.camera.factory@1.0.so|ca24770385b5873da1ae597c
 vendor/lib/vendor.huawei.hardware.camera.factory@1.1.so|07f149958687126e1d2ebf36e75aa6d8700b8df7
 vendor/lib/vendor.huawei.hardware.camera.vircamera@1.0.so|b9cd124607d20fd472594509ac1e71b92780134e
 vendor/lib64/hw/CameraFactoryService.so|fd611ac8d717f11da37e4d912be0b740b7e050c9
-vendor/lib64/hw/hicam.hal.bz.so|ddec400af18687c33ea1c3b6fbd80407c46236f7
+vendor/lib64/hw/hicam.hal.bz.so|ddec400af18687c33ea1c3b6fbd80407c46236f7|b66a2eca53a5e5dae355dd9e902cca410a562ab3
 vendor/lib64/hw/hicam.hal.service.so|82108b66da2db0882f926b683ca6d1f21dbcab93
 vendor/lib64/hw/vendor.huawei.hardware.camera.factory@1.0-impl.so|f2423d5cae4e6ce1726c16f3d106a6fd69f6885c
 vendor/lib64/hw/vendor.huawei.hardware.camera.factory@1.1-impl.so|b42f13ffc0b43635fd0a87913d6f1944d6c041ee
@@ -116,7 +116,7 @@ vendor/lib64/libai_client.so|9a0eb919e56a84264813cd917b2bf67f03e2deb7
 vendor/lib64/libc_sec.so|358f5d9efba76159b92bcc8ab519bb9123edeb3d
 vendor/lib64/libcamera_algo.so|ae3639ef81680042c2558b24b606c60374e8d1d4
 vendor/lib64/libcamera_ivp.so|0fe745f1e52b3a00cb0c24cf0b13ad50d3aead75
-vendor/lib64/libcamera_perftrace.so|dc7d2ad195381fd75f0cfac32972a1b6925c373e
+vendor/lib64/libcamera_perftrace.so|dc7d2ad195381fd75f0cfac32972a1b6925c373e|2251322b610b72dec98d3152bf1ef1f5fa104393
 vendor/lib64/libcamerabuffer.so|aeb2415419cac33389e8e05932751b5be144a721
 vendor/lib64/libcameraoemotp.so|cd12221e45c358e2e42c448175be9cd82b15aeaa
 vendor/lib64/libcie.so|d60d24288fadae2f863a7fbae60ead17a680ea8c

@@ -15,6 +15,8 @@ on zygote-start
 	write /sys/devices/platform/his_modem/modem_sysboot_start 1
 
 on boot
+	chmod 0660 /dev/madapt
+	chown radio radio /dev/madapt
 	chmod 0660 /dev/pmom
 	chown system system /dev/pmom
 	start pmom

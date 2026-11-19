@@ -23,6 +23,7 @@
 /dev/ttySPI12 	0440 	root root
 /dev/ttySPI13 	0440 	root root
 /dev/ttySPI14 	0440 	root root
+/dev/madapt 		0660 	radio radio
 
 /dev/hi_vdec					0660  system 	camera
 /dev/hi_venc					0660  system 	camera
