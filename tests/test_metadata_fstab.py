@@ -137,6 +137,11 @@ class MetadataFstabTests(unittest.TestCase):
             "rrecord": "vendor_bfm_block_device",
             "modem_fw": "vendor_modem_block_device",
             "modemnvm_img": "vendor_modem_block_device",
+            "isp_firmware": "vendor_fw_block_device",
+            "isp_boot": "vendor_fw_block_device",
+            "fw_hifi": "vendor_fw_block_device",
+            "vrl": "vendor_fw_block_device",
+            "vrl_backup": "vendor_fw_block_device",
         }
         for name, expected_type in expected_by_name.items():
             for prefix in ("/dev/block/by-name/", "/dev/block/platform/ff3c0000.ufs/by-name/"):

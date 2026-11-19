@@ -18,5 +18,6 @@
 /dev/block/(platform/ff3c0000\.ufs/)?by-name/hisee_(fs|img|encos) u:object_r:vendor_hisee_blkdev:s0
 /dev/block/(platform/ff3c0000\.ufs/)?by-name/(bootfail_info|rrecord|dfx) u:object_r:vendor_bfm_block_device:s0
 /dev/block/(platform/ff3c0000\.ufs/)?by-name/(modem_fw|modem_om|modem_secure|modem_driver|modemnvm_backup|modemnvm_cust|modemnvm_factory|modemnvm_img|modemnvm_system|modemnvm_update) u:object_r:vendor_modem_block_device:s0
+/dev/block/(platform/ff3c0000\.ufs/)?by-name/(isp_firmware|isp_boot|fw_hifi|vrl|vrl_backup) u:object_r:vendor_fw_block_device:s0
 /dev/block/sd[a-e] u:object_r:vendor_ufs_block_device:s0
 /sys/devices/platform/ff3c0000\.ufs(/.*)? u:object_r:sysfs_devices_block:s0
