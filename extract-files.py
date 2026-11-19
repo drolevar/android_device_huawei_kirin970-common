@@ -123,7 +123,13 @@ blob_fixups: blob_fixups_user_type = {
     'vendor/bin/gpsdaemon': blob_fixup()
         .add_needed('libshim_libxml2.so'),
     'vendor/bin/CameraDaemon': blob_fixup()
-        .add_needed('libshim_camera_tls.so'),
+        .add_needed('libshim_camera_tls.so')
+        .patch_file('fixups/camera_metadata_undef.py', need_tmp_dir=False),
+    (
+        'vendor/lib/libril.so',
+        'vendor/lib64/libril.so',
+    ): blob_fixup()
+        .patch_file('fixups/libril_voicereg_v12.py', need_tmp_dir=False),
     (
         'vendor/lib/hw/hicam.hal.bz.so',
         'vendor/lib/libcamera_perftrace.so',

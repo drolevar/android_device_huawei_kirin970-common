@@ -84,5 +84,61 @@ class SmartAeGuardTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "exactly one"):
                     self.module.patch_smartae(blob)
 
+class Attempt10FixupTests(unittest.TestCase):
+    def _load(self, rel):
+        spec = importlib.util.spec_from_file_location(rel.replace("/", "_"), ROOT / rel)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    def test_camera_metadata_undef_rejects_unknown_sha_and_clears_defined_targets(self):
+        import struct
+        mod = self._load("fixups/camera_metadata_undef.py")
+        dynstr = b"\x00camera_metadata_section_bounds\x00camera_metadata_section_names\x00other\x00"
+        dynsym = bytearray()
+        dynsym += struct.pack("<IBBHQQ", 0, 0, 0, 0, 0, 0)
+        dynsym += struct.pack("<IBBHQQ", 1, 0x11, 0, 11, 0x2d540, 256)
+        dynsym += struct.pack("<IBBHQQ", 32, 0x11, 0, 11, 0x2d440, 256)
+        dynsym += struct.pack("<IBBHQQ", 62, 0x12, 0, 9, 0x13000, 16)
+        sh_off = 64 + len(dynstr) + len(dynsym)
+        ehdr = bytearray(64)
+        ehdr[:6] = b"\x7fELF\x02\x01"
+        ehdr[18:20] = b"\xb7\x00"
+        struct.pack_into("<Q", ehdr, 40, sh_off)
+        struct.pack_into("<HH", ehdr, 58, 64, 3)
+        sh0 = bytes(64)
+        sh1 = struct.pack("<IIQQQQIIQQ", 0, 3, 2, 0, 64, len(dynstr), 0, 0, 1, 0)
+        sh2 = struct.pack("<IIQQQQIIQQ", 0, 11, 2, 0, 64 + len(dynstr), len(dynsym), 1, 1, 8, 24)
+        blob = bytes(ehdr) + dynstr + bytes(dynsym) + sh0 + sh1 + sh2
+        with self.assertRaisesRegex(ValueError, "SHA-256"):
+            mod.patch_camera_metadata_undef(blob)
+        with mock.patch.object(mod, "EXPECTED_SHA256", hashlib.sha256(blob).hexdigest()):
+            out = mod.patch_camera_metadata_undef(blob)
+        for idx, exp in [(1, (0, 0, 0)), (2, (0, 0, 0)), (3, (9, 0x13000, 16))]:
+            _, _, _, shndx, val, sz = struct.unpack_from("<IBBHQQ", out, 64 + len(dynstr) + idx * 24)
+            self.assertEqual((shndx, val, sz), exp)
+
+    def test_libril_voicereg_patches_both_arches_and_rejects_unknown_sha(self):
+        mod = self._load("fixups/libril_voicereg_v12.py")
+        hdr64 = bytearray(0x752C8 + 64)
+        hdr64[:6] = b"\x7fELF\x02\x01"
+        hdr64[18:20] = b"\xb7\x00"
+        hdr64[0x752C8 : 0x752C8 + len(mod.WINDOW_64_OLD)] = mod.WINDOW_64_OLD
+        b64 = bytes(hdr64)
+        with self.assertRaisesRegex(ValueError, "SHA-256"):
+            mod.patch_libril_voicereg(b"\x7fELF" + b"\x00" * 60)
+        with mock.patch.object(mod, "EXPECTED_SHA256_64", hashlib.sha256(b64).hexdigest()):
+            out64 = mod.patch_libril_voicereg(b64)
+        self.assertEqual(out64[0x752C8 : 0x752C8 + len(mod.WINDOW_64_NEW)], mod.WINDOW_64_NEW)
+
+        hdr32 = bytearray(0x4B570 + 64)
+        hdr32[:6] = b"\x7fELF\x01\x01"
+        hdr32[18:20] = b"\x28\x00"
+        hdr32[0x4B570 : 0x4B570 + len(mod.WINDOW_32_OLD)] = mod.WINDOW_32_OLD
+        b32 = bytes(hdr32)
+        with mock.patch.object(mod, "EXPECTED_SHA256_32", hashlib.sha256(b32).hexdigest()):
+            out32 = mod.patch_libril_voicereg(b32)
+        self.assertEqual(out32[0x4B570 : 0x4B570 + len(mod.WINDOW_32_NEW)], mod.WINDOW_32_NEW)
+
 if __name__ == "__main__":
     unittest.main()

@@ -42,7 +42,7 @@ vendor/lib64/libbt-vendor.so:vendor/lib64/libbt-vendor-bcm.so;FIX_SONAME|095d7a6
 
 # Camera
 vendor/bin/hw/vendor.huawei.hardware.camera.factory@1.1-service|3f57fe3bbfb1f2653ba7979e5250875591155ad6
-vendor/bin/CameraDaemon|ce901f10bf7222acb28c063beee2f44dc0fadcc9|ac66b0af2810474d5e466ce54cb58f3cc9334b5b
+vendor/bin/CameraDaemon|ce901f10bf7222acb28c063beee2f44dc0fadcc9|7a4a8c3b03f0852c89eed3d1a60dbca782b1b85a
 vendor/etc/init/vendor.huawei.hardware.camera.factory@1.1-service.rc|75cd57f6453167c2b5a692fb4139d50a09561604
 vendor/lib/hw/CameraFactoryService.so|b3489b2c29821434c4bccd096e55fa7c317e84c9
 vendor/lib/hw/hicam.hal.bz.so|b6dfb8e01516bc594ab2ef3a65afe9051e742f51|0af4c970864c8f7fc6ab710b04dd171d05bdc172
@@ -908,7 +908,7 @@ vendor/etc/init/rild.rc|606338f1db49bd1b6b396346eba113d504959dbd|a488163efd2b0d2
 vendor/lib/libbalong-ril-1.so|57c0ce2afd5cef0002c0e0668a39203b4045f083
 vendor/lib/libbalong-ril.so|858dcf36d7e717250ce04d79193460d0a3c5198c
 vendor/lib/libcommril.so|36dc07acd82586698ec8524b73d8a25209726b55
-vendor/lib/libril.so|848c4717621a3531acd85f52decb5e527dd2b551
+vendor/lib/libril.so|848c4717621a3531acd85f52decb5e527dd2b551|684bce431cfc5c07c09c7634c085cefecab65663
 vendor/lib/vendor.huawei.hardware.hisiradio@1.0.so|c2041e741645002d8e342bcf5614e876e2469702
 vendor/lib/vendor.huawei.hardware.hisiradio@1.1.so|021b960973f55da962b2eabe57239d800e885ae0
 vendor/lib/vendor.huawei.hardware.hisiradio@1.2.so|05e70578056002f1f59f5bf02a58421fd5449995
@@ -922,7 +922,7 @@ vendor/lib/vendor.huawei.hardware.radioenhance@1.0.so|5aa725659552f057d8a47f50b3
 vendor/lib64/libbalong-ril-1.so|60f6df5dfa34f961718ef6215c5dadaee096e78e
 vendor/lib64/libbalong-ril.so|09adf5dff72f42345e40e5c53f47286aa444c4f3
 vendor/lib64/libcommril.so|2c9c7391d85e9525f1062cddc40fcff7a7fc677e
-vendor/lib64/libril.so|b9b107b48094a5dc27dfe32327c3af7b95deace7
+vendor/lib64/libril.so|b9b107b48094a5dc27dfe32327c3af7b95deace7|5618ebf19afa170f9ce89d4948ff1131c8144668
 vendor/lib64/vendor.huawei.hardware.hisiradio@1.0.so|f6c3e825d18e0dac94ce00f18e035e58504caecd
 vendor/lib64/vendor.huawei.hardware.hisiradio@1.1.so|d209d7cae3ba5cb9cd1edded69da86f18a08bf02
 vendor/lib64/vendor.huawei.hardware.hisiradio@1.2.so|00ed1ce7dc75d8708686abae573776e32e651548
