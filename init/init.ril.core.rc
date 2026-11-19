@@ -1,3 +1,0 @@
-# Signal vendor rild startup after core init boot trigger (modem partitions mounted).
-on boot
-    setprop sys.rilprops_ready 1

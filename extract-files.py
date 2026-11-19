@@ -53,7 +53,7 @@ blob_fixups: blob_fixups_user_type = {
     'vendor/etc/init/rild.rc': blob_fixup()
         .regex_replace(
             r'(service vendor\.ril-daemon /vendor/bin/hw/rild)',
-            r'on property:sys.rilprops_ready=1\n    start vendor.ril-daemon\n\n\1',
+            r'on property:vendor.rilprops_ready=1\n    start vendor.ril-daemon\n\n\1',
         )
        .regex_replace(
             r'(\n    capabilities BLOCK_SUSPEND NET_ADMIN NET_RAW)',
@@ -122,6 +122,8 @@ blob_fixups: blob_fixups_user_type = {
         .add_needed('liblog.so'),
     'vendor/bin/gpsdaemon': blob_fixup()
         .add_needed('libshim_libxml2.so'),
+    'vendor/bin/CameraDaemon': blob_fixup()
+        .add_needed('libshim_camera_tls.so'),
 }  # fmt: skip
 
 def write_opaque_xml_packages(ctx, _packages_ctx):

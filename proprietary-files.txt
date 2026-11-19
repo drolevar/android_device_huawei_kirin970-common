@@ -42,7 +42,7 @@ vendor/lib64/libbt-vendor.so:vendor/lib64/libbt-vendor-bcm.so;FIX_SONAME|095d7a6
 
 # Camera
 vendor/bin/hw/vendor.huawei.hardware.camera.factory@1.1-service|3f57fe3bbfb1f2653ba7979e5250875591155ad6
-vendor/bin/CameraDaemon|ce901f10bf7222acb28c063beee2f44dc0fadcc9
+vendor/bin/CameraDaemon|ce901f10bf7222acb28c063beee2f44dc0fadcc9|ac66b0af2810474d5e466ce54cb58f3cc9334b5b
 vendor/etc/init/vendor.huawei.hardware.camera.factory@1.1-service.rc|75cd57f6453167c2b5a692fb4139d50a09561604
 vendor/lib/hw/CameraFactoryService.so|b3489b2c29821434c4bccd096e55fa7c317e84c9
 vendor/lib/hw/hicam.hal.bz.so|b6dfb8e01516bc594ab2ef3a65afe9051e742f51
@@ -904,7 +904,7 @@ vendor/lib64/libvcodec_dfx.so|1bcb7e808862d9356c83555572336692214018cc
 
 # RIL
 vendor/bin/hw/rild|f6a1cb4d741b8fa6fa363b331f08477ff84d905a
-vendor/etc/init/rild.rc|606338f1db49bd1b6b396346eba113d504959dbd|09a69c289bde4d03918cc0d46588d4f2d9732d82
+vendor/etc/init/rild.rc|606338f1db49bd1b6b396346eba113d504959dbd|a488163efd2b0d204963e08349db0fcf60c7b118
 vendor/lib/libbalong-ril-1.so|57c0ce2afd5cef0002c0e0668a39203b4045f083
 vendor/lib/libbalong-ril.so|858dcf36d7e717250ce04d79193460d0a3c5198c
 vendor/lib/libcommril.so|36dc07acd82586698ec8524b73d8a25209726b55
