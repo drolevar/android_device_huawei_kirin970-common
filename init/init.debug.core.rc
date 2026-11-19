@@ -11,7 +11,7 @@ service blanc_boot_diag /system_ext/bin/blanc-boot-diag.sh
     disabled
     oneshot
 
-# Bring-up diagnostics: start USB adbd as soon as non-bootstrap APEXes
-# (including com.android.adbd) activate during post-fs-data on debuggable builds.
-on property:apexd.status=activated && property:ro.debuggable=1
+# Bring-up diagnostics: start USB adbd once all non-bootstrap APEXes are ready
+# (including com.android.adbd) and /apex/com.android.adbd/etc/init.rc is parsed.
+on property:apexd.status=ready && property:ro.debuggable=1
     setprop sys.usb.config adb

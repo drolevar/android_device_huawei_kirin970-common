@@ -22,7 +22,6 @@ on init
     mkdir /config/usb_gadget/g1/functions/midi.gs5
     mkdir /config/usb_gadget/g1/functions/mass_storage.gs6
     mkdir /config/usb_gadget/g1/functions/ncm.gs7
-    write /config/usb_gadget/g1/functions/ncm.gs7/host_addr ${ro.serialno}
     write /config/usb_gadget/g1/functions/ncm.gs7/qmult 64
     mkdir /config/usb_gadget/g1/functions/SourceSink.gs10
     write /config/usb_gadget/g1/os_desc/use 1
