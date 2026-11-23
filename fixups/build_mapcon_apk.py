@@ -510,9 +510,17 @@ def apply_smali_patches(smali_dir: Path) -> None:
     last_loc_re = re.compile(
         r"invoke-virtual \{([vp0-9, ]+)\}, Landroid/location/LocationManager;->getLastKnownLocation\(Ljava/lang/String;\)Landroid/location/Location;"
     )
+    sim_iso_sub_re = re.compile(
+        r"invoke-virtual \{([vp0-9, ]+)\}, Landroid/telephony/TelephonyManager;->getSimCountryIso\(I\)Ljava/lang/String;"
+    )
+    sim_iso_phone_re = re.compile(
+        r"invoke-virtual \{([vp0-9, ]+)\}, Landroid/telephony/TelephonyManager;->getSimCountryIsoForPhone\(I\)Ljava/lang/String;"
+    )
     listen_count = 0
     req_loc_count = 0
     last_loc_count = 0
+    sim_iso_sub_count = 0
+    sim_iso_phone_count = 0
     for sf in sorted(smali_dir.rglob("*.smali")):
         stxt = sf.read_text(encoding="utf-8")
         new_txt, c_listen = listen_re.subn(
@@ -527,9 +535,19 @@ def apply_smali_patches(smali_dir: Path) -> None:
             r"invoke-static {\1}, Lcom/huawei/ims/HwImsShim;->getLastKnownLocationSafe(Landroid/location/LocationManager;Ljava/lang/String;)Landroid/location/Location;",
             new_txt,
         )
+        new_txt, c_sim_sub = sim_iso_sub_re.subn(
+            r"invoke-static {\1}, Lcom/huawei/ims/HwImsShim;->getSimCountryIsoForSubId(Landroid/telephony/TelephonyManager;I)Ljava/lang/String;",
+            new_txt,
+        )
+        new_txt, c_sim_phone = sim_iso_phone_re.subn(
+            r"invoke-static {\1}, Lcom/huawei/ims/HwImsShim;->getSimCountryIsoForPhone(Landroid/telephony/TelephonyManager;I)Ljava/lang/String;",
+            new_txt,
+        )
         listen_count += c_listen
         req_loc_count += c_req_loc
         last_loc_count += c_last_loc
+        sim_iso_sub_count += c_sim_sub
+        sim_iso_phone_count += c_sim_phone
         if new_txt != stxt:
             sf.write_text(new_txt, encoding="utf-8")
         if (
@@ -537,11 +555,13 @@ def apply_smali_patches(smali_dir: Path) -> None:
             or "Landroid/telephony/TelephonyManager;->listen(" in new_txt
             or "Landroid/location/LocationManager;->getGpsStatus(" in new_txt
             or "Landroid/telephony/TelephonyManager;->getNetworkCountryIso(I)" in new_txt
+            or "Landroid/telephony/TelephonyManager;->getSimCountryIso(I)" in new_txt
+            or "Landroid/telephony/TelephonyManager;->getSimCountryIsoForPhone(I)" in new_txt
             or "Landroid/location/LocationManager;->requestLocationUpdates(" in new_txt
             or "Landroid/location/LocationManager;->getLastKnownLocation(" in new_txt
         ):
             raise ValueError(
-                f"Unshimmed PhoneStateListener/listen/getGpsStatus/getNetworkCountryIso/LocationManager call remained in {sf.relative_to(smali_dir)}"
+                f"Unshimmed PhoneStateListener/listen/getGpsStatus/CountryIso/LocationManager call remained in {sf.relative_to(smali_dir)}"
             )
     if listen_count != 6:
         raise ValueError(f"Expected 6 Mapcon TelephonyManager.listen sites, got {listen_count}")
@@ -549,6 +569,10 @@ def apply_smali_patches(smali_dir: Path) -> None:
         raise ValueError(f"Expected 6 Mapcon LocationManager.requestLocationUpdates sites, got {req_loc_count}")
     if last_loc_count != 1:
         raise ValueError(f"Expected 1 Mapcon LocationManager.getLastKnownLocation site, got {last_loc_count}")
+    if sim_iso_sub_count != 2:
+        raise ValueError(f"Expected 2 Mapcon TelephonyManager.getSimCountryIso(I) sites, got {sim_iso_sub_count}")
+    if sim_iso_phone_count != 1:
+        raise ValueError(f"Expected 1 Mapcon TelephonyManager.getSimCountryIsoForPhone(I) site, got {sim_iso_phone_count}")
 
 
 def _write_deterministic_apk(

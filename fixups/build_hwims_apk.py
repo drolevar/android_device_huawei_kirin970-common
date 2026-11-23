@@ -520,6 +520,8 @@ def apply_smali_patches(smali_dir: Path) -> None:
             or "Landroid/telephony/TelephonyManager;->listen(" in new_txt
             or "Landroid/location/LocationManager;->getGpsStatus(" in new_txt
             or "Landroid/telephony/TelephonyManager;->getNetworkCountryIso(I)" in new_txt
+            or "Landroid/telephony/TelephonyManager;->getSimCountryIso(I)" in new_txt
+            or "Landroid/telephony/TelephonyManager;->getSimCountryIsoForPhone(I)" in new_txt
             or "Landroid/location/LocationManager;->requestLocationUpdates(" in new_txt
             or "Landroid/location/LocationManager;->getLastKnownLocation(" in new_txt
         ):
