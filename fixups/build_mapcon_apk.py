@@ -462,6 +462,62 @@ def apply_smali_patches(smali_dir: Path) -> None:
     if reg_rcv_count != 10:
         raise ValueError(f"Expected 10 Mapcon registerReceiver sites, got {reg_rcv_count}")
 
+    # 8. UID 1001 SDK 29+/31+ Telephony & GPS compatibility:
+    #    - PhoneStateListener(Integer) throws IllegalArgumentException when UID targetSdk >= Q (37 >= 29)
+    #    - TelephonyManager.listen() ignores listener.mSubId unless TelephonyManager.createForSubscriptionId() is used
+    #    - LocationManager.getGpsStatus(null) throws UnsupportedOperationException when BLOCK_GPS_STATUS_USAGE is enabled
+    psl_t = smali_dir / "com/hisi/mapcon/adapter/t.smali"
+    psl_txt = _replace_exact(
+        psl_t.read_text(encoding="utf-8"),
+        "    invoke-direct {p0, p1}, Landroid/telephony/PhoneStateListener;-><init>(Ljava/lang/Integer;)V",
+        "    invoke-direct {p0}, Landroid/telephony/PhoneStateListener;-><init>()V\n\n"
+        "    invoke-static {p0, p1}, Lcom/huawei/ims/HwImsShim;->recordPhoneStateListenerSubId(Landroid/telephony/PhoneStateListener;Ljava/lang/Integer;)V",
+        1,
+        "adapter.t.PhoneStateListener_init_subId",
+    )
+    psl_t.write_text(psl_txt, encoding="utf-8")
+
+    loc_f = smali_dir / "com/hisi/mapcon/d/f.smali"
+    loc_txt, gps_count = re.subn(
+        r"(?ms)^\.method private Sd\(\)I\n.*?^\.end method$",
+        ".method private Sd()I\n"
+        "    .registers 3\n\n"
+        '    const-string v0, "LocationTracker"\n\n'
+        '    const-string v1, "gps status == null"\n\n'
+        "    invoke-static {v0, v1}, Lcom/hisi/mapcon/common/a;->debug(Ljava/lang/String;Ljava/lang/String;)V\n\n"
+        "    const/4 v0, 0x0\n\n"
+        "    return v0\n"
+        ".end method",
+        loc_f.read_text(encoding="utf-8"),
+    )
+    if gps_count != 1:
+        raise ValueError(f"Expected 1 LocationTracker.Sd() method, got {gps_count}")
+    loc_f.write_text(loc_txt, encoding="utf-8")
+
+    listen_re = re.compile(
+        r"invoke-virtual \{([vp0-9, ]+)\}, Landroid/telephony/TelephonyManager;->listen\(Landroid/telephony/PhoneStateListener;I\)V"
+    )
+    listen_count = 0
+    for sf in sorted(smali_dir.rglob("*.smali")):
+        stxt = sf.read_text(encoding="utf-8")
+        new_txt, c_listen = listen_re.subn(
+            r"invoke-static {\1}, Lcom/huawei/ims/HwImsShim;->listenPhoneState(Landroid/telephony/TelephonyManager;Landroid/telephony/PhoneStateListener;I)V",
+            stxt,
+        )
+        listen_count += c_listen
+        if new_txt != stxt:
+            sf.write_text(new_txt, encoding="utf-8")
+        if (
+            "Landroid/telephony/PhoneStateListener;-><init>(Ljava/lang/Integer;)" in new_txt
+            or "Landroid/telephony/TelephonyManager;->listen(" in new_txt
+            or "Landroid/location/LocationManager;->getGpsStatus(" in new_txt
+        ):
+            raise ValueError(
+                f"Unshimmed PhoneStateListener/listen/getGpsStatus call remained in {sf.relative_to(smali_dir)}"
+            )
+    if listen_count != 6:
+        raise ValueError(f"Expected 6 Mapcon TelephonyManager.listen sites, got {listen_count}")
+
 
 def _write_deterministic_apk(
     orig_apk: Path,

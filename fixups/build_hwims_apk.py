@@ -500,6 +500,32 @@ def apply_smali_patches(smali_dir: Path) -> None:
     if reg_rcv_count != 13:
         raise ValueError(f"Expected 13 HwIms registerReceiver sites, got {reg_rcv_count}")
 
+    # 8. Rewrite TelephonyManager.listen(PhoneStateListener, int) to HwImsShim.listenPhoneState
+    #    and assert no PhoneStateListener(Integer) / getGpsStatus calls exist.
+    listen_re = re.compile(
+        r"invoke-virtual \{([vp0-9, ]+)\}, Landroid/telephony/TelephonyManager;->listen\(Landroid/telephony/PhoneStateListener;I\)V"
+    )
+    listen_count = 0
+    for sf in sorted(smali_dir.rglob("*.smali")):
+        stxt = sf.read_text(encoding="utf-8")
+        new_txt, c_listen = listen_re.subn(
+            r"invoke-static {\1}, Lcom/huawei/ims/HwImsShim;->listenPhoneState(Landroid/telephony/TelephonyManager;Landroid/telephony/PhoneStateListener;I)V",
+            stxt,
+        )
+        listen_count += c_listen
+        if new_txt != stxt:
+            sf.write_text(new_txt, encoding="utf-8")
+        if (
+            "Landroid/telephony/PhoneStateListener;-><init>(Ljava/lang/Integer;)" in new_txt
+            or "Landroid/telephony/TelephonyManager;->listen(" in new_txt
+            or "Landroid/location/LocationManager;->getGpsStatus(" in new_txt
+        ):
+            raise ValueError(
+                f"Unshimmed PhoneStateListener/listen/getGpsStatus call remained in {sf.relative_to(smali_dir)}"
+            )
+    if listen_count != 1:
+        raise ValueError(f"Expected 1 HwIms TelephonyManager.listen site, got {listen_count}")
+
 
 def _extract_apex_javalibs(emui_system_dir: Path, out_dir: Path) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)

@@ -159,7 +159,7 @@ class Attempt12HwImsFixupTests(unittest.TestCase):
         html = pkg_by_src["system/etc/noticeFile/HwIms.html"]
         self.assertFalse(apk.is_package)  # .apk is auto-packaged by FileList without '-'
         self.assertEqual(apk.hash, "867bc054b6d71a8cef718830cec65a41d6ba069d")
-        self.assertEqual(apk.fixup_hash, "fa515fdf0db0cddf25c6f4a352cae5a6f2c4921e")
+        self.assertEqual(apk.fixup_hash, "1b0505c82ae903a1880b29d75d2173bc7d63f6a7")
         self.assertTrue(html.is_package)
         self.assertEqual(html.hash, "adb1ae32a5c562d488dadf0c1a962940e85c9e1a")
 
@@ -202,7 +202,7 @@ class Attempt13MapconFixupTests(unittest.TestCase):
         self.assertIn("system/app/Mapcon/Mapcon.apk", pkg_by_src)
         mapcon = pkg_by_src["system/app/Mapcon/Mapcon.apk"]
         self.assertEqual(mapcon.hash, "f34bc5fd3ffbbc96b4bd9362ae5569858ff81f20")
-        self.assertEqual(mapcon.fixup_hash, "8403f4beafad9ea988f08ed4cd94072a37303461")
+        self.assertEqual(mapcon.fixup_hash, "83507468ba492d0a60ebf2264d8f045f9bb6bea2")
         for bin_or_lib in (
             "vendor/bin/iked",
             "vendor/bin/hinetmanager",
