@@ -1,9 +1,8 @@
-
-on early-boot
-    service hivwserver /vendor/bin/hivwserver
+service hivwserver /vendor/bin/hivwserver
     class vowifi
     user system
     group audio inet net_bt net_bt_admin net_bw_acct system
+    disabled
 
 on boot
     # vowifi
@@ -13,4 +12,3 @@ on boot
 
 on property:ro.vendor.config.hw_vowifi=true
     class_start vowifi
-

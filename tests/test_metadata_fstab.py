@@ -199,13 +199,46 @@ class MetadataFstabTests(unittest.TestCase):
         }
         expected_sys_keys = moved | {
             "ro.bpf.kver_override",
+            "persist.radio.defdualltecap",
             "ro.config.hw_volte_dyn",
             "ro.config.hw_ut_ims",
+            "ro.config.hw_vowifi",
+            "ro.config.hw_vowifi_mmsut",
             "persist.dbg.volte_avail_ovr",
+            "persist.dbg.wfc_avail_ovr",
         }
         self.assertEqual(sys_keys, expected_sys_keys)
         self.assertEqual(vnd_keys & expected_sys_keys, set())
+        self.assertIn("ro.vendor.config.hw_vowifi", vnd_keys)
         self.assertRegex((ROOT / "BoardConfigCommon.mk").read_text(), r"(?m)^TARGET_SYSTEM_PROP\s*\+=\s*\$\(COMMON_PATH\)/system\.prop\b")
+
+    def test_attempt13_vowifi_init_and_proprietary_staging(self):
+        plat_rc = (ROOT / "init/init.platform.rc").read_text()
+        self.assertIn("mkdir /data/vendor/iked_config 0770 root system", plat_rc)
+        self.assertIn("mkdir /data/vendor/hinetmanager 0770 root system", plat_rc)
+        self.assertIn("service iked /vendor/bin/iked", plat_rc)
+        self.assertIn("interface vendor.huawei.hardware.iked@1.0::IIkedDevice default", plat_rc)
+
+        vowifi_rc = (ROOT / "init/init.vowifi.rc").read_text()
+        self.assertNotIn("on early-boot", vowifi_rc)
+        self.assertIn("service hivwserver /vendor/bin/hivwserver", vowifi_rc)
+
+        hinet_rc = (ROOT / "init/hinetmanager.rc").read_text()
+        self.assertIn("service hinetmanager /vendor/bin/hinetmanager", hinet_rc)
+        self.assertIn("interface vendor.huawei.hardware.hinetmanager@1.0::IHinetmanagerDevice default", hinet_rc)
+        self.assertNotIn("dsm", hinet_rc)
+
+        props_txt = (ROOT / "proprietary-files.txt").read_text()
+        for entry in (
+            "system/app/Mapcon/Mapcon.apk|",
+            "vendor/bin/iked|",
+            "vendor/bin/hinetmanager|",
+            "vendor/bin/hivwserver|",
+            "vendor/lib64/libracoon2.so|",
+            "vendor/lib64/vendor.huawei.hardware.iked@1.0.so|",
+            "vendor/lib64/vendor.huawei.hardware.hinetmanager@1.0.so|",
+        ):
+            self.assertIn(entry, props_txt)
 
 
 if __name__ == "__main__":

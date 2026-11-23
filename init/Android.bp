@@ -136,6 +136,13 @@ prebuilt_etc {
 }
 
 prebuilt_etc {
+    name: "hinetmanager.rc",
+    src: "hinetmanager.rc",
+    sub_dir: "init",
+    vendor: true,
+}
+
+prebuilt_etc {
     name: "ueventd.kirin970.rc",
     filename: "ueventd.rc",
     src: "ueventd.kirin970.rc",

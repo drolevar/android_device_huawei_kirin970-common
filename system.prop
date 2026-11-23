@@ -21,6 +21,7 @@ ro.kirin.product.platform=kirin970
 ro.comp.chipset_version=Chipset-boston 102.0.0.001(1ISW)
 
 # RIL
+persist.radio.defdualltecap=1
 persist.radio.dualltecap=1
 
 # Sensors
@@ -29,11 +30,14 @@ use_sensorhub_labc=false
 # Touch
 persist.kirin.touch_vsync_opt=1
 
-# VoLTE / IMS
+# VoLTE / VoWiFi / IMS
 ro.config.hw_volte_on=true
 ro.config.hw_volte_dyn=false
 ro.config.hw_ut_ims=true
+ro.config.hw_vowifi=true
+ro.config.hw_vowifi_mmsut=true
 persist.dbg.volte_avail_ovr=1
+persist.dbg.wfc_avail_ovr=1
 
 # BPF
 ro.bpf.kver_override=5.10.199

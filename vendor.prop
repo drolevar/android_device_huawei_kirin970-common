@@ -40,6 +40,7 @@ ro.vendor.config.hw_music_lp=true
 ro.vendor.config.music_lp_vol=true
 ro.vendor.config.board_ipa=true
 ro.vendor.config.perfgenius=true
+ro.vendor.config.hw_vowifi=true
 ro.vendor.tui.service=true
 
 # Power HAL

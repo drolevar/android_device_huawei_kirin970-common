@@ -139,6 +139,8 @@ blob_fixups: blob_fixups_user_type = {
         .replace_needed('libtinyxml2.so', 'libtinyxml2-v29.so'),
     'system/app/HwIms/HwIms.apk': blob_fixup()
         .patch_file('fixups/build_hwims_apk.py', need_tmp_dir=False),
+    'system/app/Mapcon/Mapcon.apk': blob_fixup()
+        .patch_file('fixups/build_mapcon_apk.py', need_tmp_dir=False),
 }  # fmt: skip
 
 def write_opaque_xml_packages(ctx, _packages_ctx):

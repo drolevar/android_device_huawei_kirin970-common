@@ -78,6 +78,9 @@ on post-fs-data
     mkdir /data/vendor/log/audio_logs
     chmod 0775 /data/vendor/log/audio_logs
     chown audioserver system /data/vendor/log/audio_logs
+
+    mkdir /data/vendor/iked_config 0770 root system
+    mkdir /data/vendor/hinetmanager 0770 root system
     restorecon_recursive /data/vendor/log/audio_logs
 
     mkdir /data/vendor/log/audio_logs/audio_hook
@@ -426,14 +429,13 @@ service hiscoutmanager /system/vendor/bin/hiscoutmanager
     oneshot
     seclabel u:r:hiscoutmanager:s0
 
-## vowifi iked defalut start
-## Service definition
-service iked /system/vendor/bin/iked
-#    interface vendor.huawei.hardware.iked@1.0::IIkedDevice default
+## vowifi iked default start
+service iked /vendor/bin/iked
+    interface vendor.huawei.hardware.iked@1.0::IIkedDevice default
     class late_start
     user root
-	disabled
-    group system wakelock
+    disabled
+    group system wakelock inet net_admin net_raw
     seclabel u:r:iked:s0
 
 on property:ro.vendor.config.hw_vowifi=true

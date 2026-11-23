@@ -140,6 +140,7 @@ PRODUCT_PACKAGES += \
     init.tee.rc \
     init.tee.core.rc \
     init.vowifi.rc \
+    hinetmanager.rc \
     ueventd.kirin970.rc
 
 PRODUCT_PACKAGES_DEBUG += \

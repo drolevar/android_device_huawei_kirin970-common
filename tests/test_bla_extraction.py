@@ -159,7 +159,7 @@ class Attempt12HwImsFixupTests(unittest.TestCase):
         html = pkg_by_src["system/etc/noticeFile/HwIms.html"]
         self.assertFalse(apk.is_package)  # .apk is auto-packaged by FileList without '-'
         self.assertEqual(apk.hash, "867bc054b6d71a8cef718830cec65a41d6ba069d")
-        self.assertEqual(apk.fixup_hash, "a286295c50c876cf02eff3359f10b04e6faaa29f")
+        self.assertEqual(apk.fixup_hash, "cc2fa792b2c1552ddb322a2c5842b7e4f3e9d286")
         self.assertTrue(html.is_package)
         self.assertEqual(html.hash, "adb1ae32a5c562d488dadf0c1a962940e85c9e1a")
 
@@ -183,6 +183,51 @@ class Attempt12HwImsFixupTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "expected 1"):
             mod._replace_exact("xyz xyz", "xyz", "123", 1, "dup")
         self.assertEqual(mod._replace_exact("a xyz b", "xyz", "123", 1, "ok"), "a 123 b")
+
+
+class Attempt13MapconFixupTests(unittest.TestCase):
+    def _load(self):
+        spec = importlib.util.spec_from_file_location("build_mapcon_apk", ROOT / "fixups/build_mapcon_apk.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    def test_mapcon_and_vowifi_entries_are_pinned_in_file_list(self):
+        from extract_utils.file import FileList
+
+        fl = FileList()
+        fl.add_from_file(str(ROOT / "proprietary-files.txt"))
+        pkg_by_src = {f.src: f for f in fl.package_files}
+        all_by_src = {f.src: f for f in fl.all_files}
+        self.assertIn("system/app/Mapcon/Mapcon.apk", pkg_by_src)
+        mapcon = pkg_by_src["system/app/Mapcon/Mapcon.apk"]
+        self.assertEqual(mapcon.hash, "f34bc5fd3ffbbc96b4bd9362ae5569858ff81f20")
+        self.assertEqual(mapcon.fixup_hash, "329a97e859577853e2524db5b91d513f4efde141")
+        for bin_or_lib in (
+            "vendor/bin/iked",
+            "vendor/bin/hinetmanager",
+            "vendor/bin/hivwserver",
+            "vendor/lib64/libracoon2.so",
+            "vendor/lib64/vendor.huawei.hardware.iked@1.0.so",
+            "vendor/lib64/vendor.huawei.hardware.hinetmanager@1.0.so",
+        ):
+            self.assertIn(bin_or_lib, all_by_src)
+            self.assertIsNotNone(all_by_src[bin_or_lib].hash)
+
+    def test_verify_mapcon_inputs_rejects_missing_or_tampered_inputs(self):
+        mod = self._load()
+        with tempfile.TemporaryDirectory() as td:
+            tdp = Path(td)
+            with self.assertRaises(FileNotFoundError):
+                mod.verify_mapcon_inputs(tdp, {"app/Mapcon/Mapcon.apk": "0" * 64})
+            target = tdp / "app/Mapcon/Mapcon.apk"
+            target.parent.mkdir(parents=True)
+            target.write_bytes(b"tampered")
+            with self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
+                mod.verify_mapcon_inputs(tdp, {"app/Mapcon/Mapcon.apk": "0" * 64})
+            mod.verify_mapcon_inputs(
+                tdp, {"app/Mapcon/Mapcon.apk": hashlib.sha256(b"tampered").hexdigest()}
+            )
 
 if __name__ == "__main__":
     unittest.main()

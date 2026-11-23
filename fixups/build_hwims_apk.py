@@ -636,7 +636,11 @@ def build_patched_hwims_apk(
         stub_cls.mkdir()
         shim_cls.mkdir()
         dex2_dir.mkdir()
-        cold_cp = f"{modlib / 'android.jar'}:{modlib / 'framework-connectivity.jar'}"
+        cold_cp = (
+            f"{modlib / 'android.jar'}:"
+            f"{modlib / 'framework-connectivity.jar'}:"
+            f"{modlib / 'framework-wifi.jar'}"
+        )
         stubs = sorted(str(p) for p in (shim_dir / "compile_stubs").rglob("*.java"))
         srcs = sorted(str(p) for p in (shim_dir / "src").rglob("*.java"))
         subprocess.run(
@@ -647,7 +651,12 @@ def build_patched_hwims_apk(
             [str(javac), "--release", "11", "-cp", f"{cold_cp}:{stub_cls}", "-d", str(shim_cls), *srcs],
             check=True,
         )
-        cls_files = sorted(str(p) for p in shim_cls.rglob("*.class"))
+        cls_files = sorted(
+            [
+                *(str(p) for p in shim_cls.rglob("*.class")),
+                *(str(p) for p in (stub_cls / "android/net/wifi/HwQoE").rglob("*.class")),
+            ]
+        )
         subprocess.run(
             [
                 str(java),

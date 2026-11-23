@@ -1,0 +1,7 @@
+service hinetmanager /vendor/bin/hinetmanager
+    interface vendor.huawei.hardware.hinetmanager@1.0::IHinetmanagerDevice default
+    class late_start
+    user root
+    group root system readproc inet net_admin net_raw
+    seclabel u:r:hinetmanager:s0
+    onrestart setprop vendor.sys.hinetmanager_has_restarted 1

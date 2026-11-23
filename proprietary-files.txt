@@ -797,9 +797,23 @@ vendor/lib64/libOpenCLFoundation.so|d5319b5458625ce9c9e9750bc62cc9ec56627863|4fc
 vendor/lib64/libSR_opencl.so|b305b37992e6088c7b65bb988ac0903cbe75655a|4de4295d4178928d46ec818755fc6f60c04faa42
 vendor/lib64/libhiion.so|d493ce48b4b6373d2cf712f764b2e0d9ef059c40
 
-# IMS
-system/app/HwIms/HwIms.apk|867bc054b6d71a8cef718830cec65a41d6ba069d|a286295c50c876cf02eff3359f10b04e6faaa29f
+# IMS / VoWiFi
+system/app/HwIms/HwIms.apk|867bc054b6d71a8cef718830cec65a41d6ba069d|cc2fa792b2c1552ddb322a2c5842b7e4f3e9d286
+system/app/Mapcon/Mapcon.apk|f34bc5fd3ffbbc96b4bd9362ae5569858ff81f20|329a97e859577853e2524db5b91d513f4efde141
 -system/etc/noticeFile/HwIms.html|adb1ae32a5c562d488dadf0c1a962940e85c9e1a
+vendor/bin/hinetmanager|89372eb6dcb7537e469a229ab20ad7e22b07e8f9
+vendor/bin/hivwserver|793dbb8d1d461d3582a2411e2b89d7fc9c895219
+vendor/bin/iked|869b437a17f166aac9e856186d527edc6578127d
+vendor/etc/ikedconfig/default.conf|113ad3bd57db9c6247a5f57451ff40876739855a
+vendor/etc/ikedconfig/ikedconfig.ini|d2633b4fa7de84b05051f77b8b565e944e7ac5d6
+vendor/etc/ikedconfig/racoon2.conf|57643a03e2015fa8903984862a65f42142ea8dda
+vendor/etc/ikedconfig/root_cert/21603.cer|3c1c0175e7f82dfa6aa6f6cc32aaed15ac50f42d
+vendor/etc/ikedconfig/tunnel_ike.conf|d54e37853f8212c4c547bd0ee260d342e02a28c3
+vendor/etc/ikedconfig/tunnel_ike_natt.conf|ca91fc1b9ca06e9bba871aba0efeb6bb5c4bc936
+vendor/etc/ikedconfig/vals.conf|7920ac46fe2d07b5458659836035bb946735f3a8
+vendor/lib64/libracoon2.so|fe9449b929ee7cb53525a44a9be07c7027e83e86
+vendor/lib64/vendor.huawei.hardware.hinetmanager@1.0.so|7af162086f67e27188b7c00924762bfda611e4f0
+vendor/lib64/vendor.huawei.hardware.iked@1.0.so|378f7e4e1f2956e9f0336d8c3964337b296c2cfc
 
 # IR
 vendor/etc/ir_config|0139518fdf783798f20251e51e8d1957a0680cf5
