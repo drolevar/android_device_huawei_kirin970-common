@@ -519,9 +519,12 @@ def apply_smali_patches(smali_dir: Path) -> None:
             "Landroid/telephony/PhoneStateListener;-><init>(Ljava/lang/Integer;)" in new_txt
             or "Landroid/telephony/TelephonyManager;->listen(" in new_txt
             or "Landroid/location/LocationManager;->getGpsStatus(" in new_txt
+            or "Landroid/telephony/TelephonyManager;->getNetworkCountryIso(I)" in new_txt
+            or "Landroid/location/LocationManager;->requestLocationUpdates(" in new_txt
+            or "Landroid/location/LocationManager;->getLastKnownLocation(" in new_txt
         ):
             raise ValueError(
-                f"Unshimmed PhoneStateListener/listen/getGpsStatus call remained in {sf.relative_to(smali_dir)}"
+                f"Unshimmed PhoneStateListener/listen/getGpsStatus/getNetworkCountryIso/LocationManager call remained in {sf.relative_to(smali_dir)}"
             )
     if listen_count != 1:
         raise ValueError(f"Expected 1 HwIms TelephonyManager.listen site, got {listen_count}")

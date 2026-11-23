@@ -492,31 +492,63 @@ def apply_smali_patches(smali_dir: Path) -> None:
     )
     if gps_count != 1:
         raise ValueError(f"Expected 1 LocationTracker.Sd() method, got {gps_count}")
+    loc_txt = _replace_exact(
+        loc_txt,
+        "invoke-virtual {v2, v0}, Landroid/telephony/TelephonyManager;->getNetworkCountryIso(I)Ljava/lang/String;",
+        "invoke-static {v2, v0}, Lcom/huawei/ims/HwImsShim;->getNetworkCountryIsoForSubId(Landroid/telephony/TelephonyManager;I)Ljava/lang/String;",
+        1,
+        "LocationTracker.getNetworkCountryIsoForSubId",
+    )
     loc_f.write_text(loc_txt, encoding="utf-8")
 
     listen_re = re.compile(
         r"invoke-virtual \{([vp0-9, ]+)\}, Landroid/telephony/TelephonyManager;->listen\(Landroid/telephony/PhoneStateListener;I\)V"
     )
+    req_loc_re = re.compile(
+        r"invoke-virtual/range \{([vp0-9. ]+)\}, Landroid/location/LocationManager;->requestLocationUpdates\(Ljava/lang/String;JFLandroid/location/LocationListener;\)V"
+    )
+    last_loc_re = re.compile(
+        r"invoke-virtual \{([vp0-9, ]+)\}, Landroid/location/LocationManager;->getLastKnownLocation\(Ljava/lang/String;\)Landroid/location/Location;"
+    )
     listen_count = 0
+    req_loc_count = 0
+    last_loc_count = 0
     for sf in sorted(smali_dir.rglob("*.smali")):
         stxt = sf.read_text(encoding="utf-8")
         new_txt, c_listen = listen_re.subn(
             r"invoke-static {\1}, Lcom/huawei/ims/HwImsShim;->listenPhoneState(Landroid/telephony/TelephonyManager;Landroid/telephony/PhoneStateListener;I)V",
             stxt,
         )
+        new_txt, c_req_loc = req_loc_re.subn(
+            r"invoke-static/range {\1}, Lcom/huawei/ims/HwImsShim;->requestLocationUpdatesSafe(Landroid/location/LocationManager;Ljava/lang/String;JFLandroid/location/LocationListener;)V",
+            new_txt,
+        )
+        new_txt, c_last_loc = last_loc_re.subn(
+            r"invoke-static {\1}, Lcom/huawei/ims/HwImsShim;->getLastKnownLocationSafe(Landroid/location/LocationManager;Ljava/lang/String;)Landroid/location/Location;",
+            new_txt,
+        )
         listen_count += c_listen
+        req_loc_count += c_req_loc
+        last_loc_count += c_last_loc
         if new_txt != stxt:
             sf.write_text(new_txt, encoding="utf-8")
         if (
             "Landroid/telephony/PhoneStateListener;-><init>(Ljava/lang/Integer;)" in new_txt
             or "Landroid/telephony/TelephonyManager;->listen(" in new_txt
             or "Landroid/location/LocationManager;->getGpsStatus(" in new_txt
+            or "Landroid/telephony/TelephonyManager;->getNetworkCountryIso(I)" in new_txt
+            or "Landroid/location/LocationManager;->requestLocationUpdates(" in new_txt
+            or "Landroid/location/LocationManager;->getLastKnownLocation(" in new_txt
         ):
             raise ValueError(
-                f"Unshimmed PhoneStateListener/listen/getGpsStatus call remained in {sf.relative_to(smali_dir)}"
+                f"Unshimmed PhoneStateListener/listen/getGpsStatus/getNetworkCountryIso/LocationManager call remained in {sf.relative_to(smali_dir)}"
             )
     if listen_count != 6:
         raise ValueError(f"Expected 6 Mapcon TelephonyManager.listen sites, got {listen_count}")
+    if req_loc_count != 6:
+        raise ValueError(f"Expected 6 Mapcon LocationManager.requestLocationUpdates sites, got {req_loc_count}")
+    if last_loc_count != 1:
+        raise ValueError(f"Expected 1 Mapcon LocationManager.getLastKnownLocation site, got {last_loc_count}")
 
 
 def _write_deterministic_apk(
