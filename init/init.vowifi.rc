@@ -11,4 +11,4 @@ on boot
     write /proc/sys/net/ipv4/ip_local_reserved_ports 31000-31050
 
 on property:ro.vendor.config.hw_vowifi=true
-    class_start vowifi
+    start hivwserver

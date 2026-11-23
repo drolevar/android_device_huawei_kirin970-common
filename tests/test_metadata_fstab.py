@@ -222,6 +222,7 @@ class MetadataFstabTests(unittest.TestCase):
         vowifi_rc = (ROOT / "init/init.vowifi.rc").read_text()
         self.assertNotIn("on early-boot", vowifi_rc)
         self.assertIn("service hivwserver /vendor/bin/hivwserver", vowifi_rc)
+        self.assertIn("start hivwserver", vowifi_rc)
 
         hinet_rc = (ROOT / "init/hinetmanager.rc").read_text()
         self.assertIn("service hinetmanager /vendor/bin/hinetmanager", hinet_rc)

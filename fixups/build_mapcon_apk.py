@@ -7,6 +7,7 @@ from __future__ import annotations
 import hashlib
 import inspect
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -413,6 +414,53 @@ def apply_smali_patches(smali_dir: Path) -> None:
         "FirmwareKeepAlive.InvalidPacketException",
     )
     fka.write_text(fka_txt, encoding="utf-8")
+
+    # 7. UID-level SDK 31+/34+ CompatChanges in com.android.phone (SDK 37):
+    #    - 15 PendingIntent.getBroadcast sites -> HwImsShim.getPendingIntentBroadcast
+    #    - 10 Context/ContextWrapper.registerReceiver sites -> HwImsShim.registerReceiverCompat
+    pi_bcast_count = 0
+    reg_rcv_count = 0
+    reg_3_re = re.compile(
+        r"invoke-virtual \{([vp0-9, ]+)\}, Landroid/content/(?:Context|ContextWrapper);->registerReceiver\(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;\)Landroid/content/Intent;"
+    )
+    reg_5_re = re.compile(
+        r"invoke-virtual \{([vp0-9, ]+)\}, Landroid/content/(?:Context|ContextWrapper);->registerReceiver\(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;Ljava/lang/String;Landroid/os/Handler;\)Landroid/content/Intent;"
+    )
+    for sf in sorted(smali_dir.rglob("*.smali")):
+        stxt = sf.read_text(encoding="utf-8")
+        orig = stxt
+        c_pi = stxt.count(
+            "Landroid/app/PendingIntent;->getBroadcast(Landroid/content/Context;ILandroid/content/Intent;I)Landroid/app/PendingIntent;"
+        )
+        if c_pi:
+            stxt = stxt.replace(
+                "Landroid/app/PendingIntent;->getBroadcast(Landroid/content/Context;ILandroid/content/Intent;I)Landroid/app/PendingIntent;",
+                "Lcom/huawei/ims/HwImsShim;->getPendingIntentBroadcast(Landroid/content/Context;ILandroid/content/Intent;I)Landroid/app/PendingIntent;",
+            )
+            pi_bcast_count += c_pi
+        stxt, c_r3 = reg_3_re.subn(
+            r"invoke-static {\1}, Lcom/huawei/ims/HwImsShim;->registerReceiverCompat(Landroid/content/Context;Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;",
+            stxt,
+        )
+        stxt, c_r5 = reg_5_re.subn(
+            r"invoke-static {\1}, Lcom/huawei/ims/HwImsShim;->registerReceiverCompat(Landroid/content/Context;Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;Ljava/lang/String;Landroid/os/Handler;)Landroid/content/Intent;",
+            stxt,
+        )
+        reg_rcv_count += c_r3 + c_r5
+        if stxt != orig:
+            sf.write_text(stxt, encoding="utf-8")
+        if (
+            "Landroid/app/PendingIntent;->get" in stxt
+            or "Landroid/content/Context;->registerReceiver(" in stxt
+            or "Landroid/content/ContextWrapper;->registerReceiver(" in stxt
+        ):
+            raise ValueError(
+                f"Unshimmed PendingIntent/registerReceiver call remained in {sf.relative_to(smali_dir)}"
+            )
+    if pi_bcast_count != 15:
+        raise ValueError(f"Expected 15 Mapcon PendingIntent.getBroadcast sites, got {pi_bcast_count}")
+    if reg_rcv_count != 10:
+        raise ValueError(f"Expected 10 Mapcon registerReceiver sites, got {reg_rcv_count}")
 
 
 def _write_deterministic_apk(
