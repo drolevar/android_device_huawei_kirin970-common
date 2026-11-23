@@ -137,6 +137,8 @@ blob_fixups: blob_fixups_user_type = {
         'vendor/lib64/libcamera_perftrace.so',
     ): blob_fixup()
         .replace_needed('libtinyxml2.so', 'libtinyxml2-v29.so'),
+    'system/app/HwIms/HwIms.apk': blob_fixup()
+        .patch_file('fixups/build_hwims_apk.py', need_tmp_dir=False),
 }  # fmt: skip
 
 def write_opaque_xml_packages(ctx, _packages_ctx):

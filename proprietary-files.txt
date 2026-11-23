@@ -797,6 +797,10 @@ vendor/lib64/libOpenCLFoundation.so|d5319b5458625ce9c9e9750bc62cc9ec56627863|4fc
 vendor/lib64/libSR_opencl.so|b305b37992e6088c7b65bb988ac0903cbe75655a|4de4295d4178928d46ec818755fc6f60c04faa42
 vendor/lib64/libhiion.so|d493ce48b4b6373d2cf712f764b2e0d9ef059c40
 
+# IMS
+system/app/HwIms/HwIms.apk|867bc054b6d71a8cef718830cec65a41d6ba069d|ebf1a7d839c41b71ff6b4ff25071d2eee5104e0f
+-system/etc/noticeFile/HwIms.html|adb1ae32a5c562d488dadf0c1a962940e85c9e1a
+
 # IR
 vendor/etc/ir_config|0139518fdf783798f20251e51e8d1957a0680cf5
 vendor/lib/libAudioIrAccess.so|4b7e6a12e0d31044ecb648f249f5a5e542f991ed

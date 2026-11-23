@@ -29,8 +29,11 @@ use_sensorhub_labc=false
 # Touch
 persist.kirin.touch_vsync_opt=1
 
-# VoLTE
+# VoLTE / IMS
 ro.config.hw_volte_on=true
+ro.config.hw_volte_dyn=false
+ro.config.hw_ut_ims=true
+persist.dbg.volte_avail_ovr=1
 
 # BPF
 ro.bpf.kver_override=5.10.199

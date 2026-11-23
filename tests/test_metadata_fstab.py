@@ -197,7 +197,12 @@ class MetadataFstabTests(unittest.TestCase):
             for line in (ROOT / "vendor.prop").read_text().splitlines()
             if "=" in line and not line.lstrip().startswith("#")
         }
-        expected_sys_keys = moved | {"ro.bpf.kver_override"}
+        expected_sys_keys = moved | {
+            "ro.bpf.kver_override",
+            "ro.config.hw_volte_dyn",
+            "ro.config.hw_ut_ims",
+            "persist.dbg.volte_avail_ovr",
+        }
         self.assertEqual(sys_keys, expected_sys_keys)
         self.assertEqual(vnd_keys & expected_sys_keys, set())
         self.assertRegex((ROOT / "BoardConfigCommon.mk").read_text(), r"(?m)^TARGET_SYSTEM_PROP\s*\+=\s*\$\(COMMON_PATH\)/system\.prop\b")

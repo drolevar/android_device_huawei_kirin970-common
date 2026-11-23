@@ -140,5 +140,49 @@ class Attempt10FixupTests(unittest.TestCase):
             out32 = mod.patch_libril_voicereg(b32)
         self.assertEqual(out32[0x4B570 : 0x4B570 + len(mod.WINDOW_32_NEW)], mod.WINDOW_32_NEW)
 
+class Attempt12HwImsFixupTests(unittest.TestCase):
+    def _load(self):
+        spec = importlib.util.spec_from_file_location("build_hwims_apk", ROOT / "fixups/build_hwims_apk.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    def test_hwims_entries_are_pinned_as_soong_packages(self):
+        from extract_utils.file import FileList
+
+        fl = FileList()
+        fl.add_from_file(str(ROOT / "proprietary-files.txt"))
+        pkg_by_src = {f.src: f for f in fl.package_files}
+        self.assertIn("system/app/HwIms/HwIms.apk", pkg_by_src)
+        self.assertIn("system/etc/noticeFile/HwIms.html", pkg_by_src)
+        apk = pkg_by_src["system/app/HwIms/HwIms.apk"]
+        html = pkg_by_src["system/etc/noticeFile/HwIms.html"]
+        self.assertFalse(apk.is_package)  # .apk is auto-packaged by FileList without '-'
+        self.assertEqual(apk.hash, "867bc054b6d71a8cef718830cec65a41d6ba069d")
+        self.assertEqual(apk.fixup_hash, "ebf1a7d839c41b71ff6b4ff25071d2eee5104e0f")
+        self.assertTrue(html.is_package)
+        self.assertEqual(html.hash, "adb1ae32a5c562d488dadf0c1a962940e85c9e1a")
+
+    def test_verify_hwims_inputs_rejects_missing_or_tampered_inputs(self):
+        mod = self._load()
+        with tempfile.TemporaryDirectory() as td:
+            tdp = Path(td)
+            with self.assertRaises(FileNotFoundError):
+                mod.verify_hwims_inputs(tdp, {"app/HwIms/HwIms.apk": "0" * 64})
+            target = tdp / "app/HwIms/HwIms.apk"
+            target.parent.mkdir(parents=True)
+            target.write_bytes(b"tampered")
+            with self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
+                mod.verify_hwims_inputs(tdp, {"app/HwIms/HwIms.apk": "0" * 64})
+            mod.verify_hwims_inputs(tdp, {"app/HwIms/HwIms.apk": hashlib.sha256(b"tampered").hexdigest()})
+
+    def test_replace_exact_rejects_zero_or_duplicate_matches(self):
+        mod = self._load()
+        with self.assertRaisesRegex(ValueError, "expected 1"):
+            mod._replace_exact("abc", "xyz", "123", 1, "missing")
+        with self.assertRaisesRegex(ValueError, "expected 1"):
+            mod._replace_exact("xyz xyz", "xyz", "123", 1, "dup")
+        self.assertEqual(mod._replace_exact("a xyz b", "xyz", "123", 1, "ok"), "a 123 b")
+
 if __name__ == "__main__":
     unittest.main()
