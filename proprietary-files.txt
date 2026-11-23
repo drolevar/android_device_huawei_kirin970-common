@@ -798,7 +798,7 @@ vendor/lib64/libSR_opencl.so|b305b37992e6088c7b65bb988ac0903cbe75655a|4de4295d41
 vendor/lib64/libhiion.so|d493ce48b4b6373d2cf712f764b2e0d9ef059c40
 
 # IMS
-system/app/HwIms/HwIms.apk|867bc054b6d71a8cef718830cec65a41d6ba069d|ebf1a7d839c41b71ff6b4ff25071d2eee5104e0f
+system/app/HwIms/HwIms.apk|867bc054b6d71a8cef718830cec65a41d6ba069d|a286295c50c876cf02eff3359f10b04e6faaa29f
 -system/etc/noticeFile/HwIms.html|adb1ae32a5c562d488dadf0c1a962940e85c9e1a
 
 # IR

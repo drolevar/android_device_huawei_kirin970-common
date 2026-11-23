@@ -158,6 +158,19 @@ def apply_smali_patches(smali_dir: Path) -> None:
     txt = _replace_exact(txt, 'const-string v2, "/libssl.so"', 'const-string v2, "/libssl_hwims.so"', 1, "SciDefaultTls.libssl_path")
     sci_tls.write_text(txt, encoding="utf-8")
 
+    # 1b. Route ImsCallProviderUtils VoWiFi gate property from vendor_default_prop
+    #     (ro.vendor.config.hw_vowifi) to telephony_config_prop (ro.config.hw_vowifi).
+    icpu = smali_dir / "com/huawei/ims/ImsCallProviderUtils.smali"
+    icpu_txt = icpu.read_text(encoding="utf-8")
+    icpu_txt = _replace_exact(
+        icpu_txt,
+        'const-string v1, "ro.vendor.config.hw_vowifi"',
+        'const-string v1, "ro.config.hw_vowifi"',
+        1,
+        "ImsCallProviderUtils.hw_vowifi_prop",
+    )
+    icpu.write_text(icpu_txt, encoding="utf-8")
+
     # 2. Accept RIL_RADIO_TECHNOLOGY_LTE_CA (19 = 0x13) in isRadioTechnologyLteOrNr(I)Z,
     #    while preserving 18 (0x12 = IWLAN) false so VoWiFi reports REGISTRATION_TECH_IWLAN.
     handler = smali_dir / "com/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler.smali"

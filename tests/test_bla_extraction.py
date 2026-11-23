@@ -159,7 +159,7 @@ class Attempt12HwImsFixupTests(unittest.TestCase):
         html = pkg_by_src["system/etc/noticeFile/HwIms.html"]
         self.assertFalse(apk.is_package)  # .apk is auto-packaged by FileList without '-'
         self.assertEqual(apk.hash, "867bc054b6d71a8cef718830cec65a41d6ba069d")
-        self.assertEqual(apk.fixup_hash, "ebf1a7d839c41b71ff6b4ff25071d2eee5104e0f")
+        self.assertEqual(apk.fixup_hash, "a286295c50c876cf02eff3359f10b04e6faaa29f")
         self.assertTrue(html.is_package)
         self.assertEqual(html.hash, "adb1ae32a5c562d488dadf0c1a962940e85c9e1a")
 
