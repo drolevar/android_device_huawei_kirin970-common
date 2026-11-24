@@ -36,6 +36,32 @@ EXPECTED_INPUT_SHA256 = {
     "app/HwIms/lib/arm64/libvsc.so": "db0dbe9742ccc24fc397bb0945bc04d065de416cf10990cda8b096a87da9388f",
 }
 
+EXPECTED_OUTPUT_SHA256 = "6c1a30338f23a735ea3ffb30fd31ae57750c2dcde51a44d837f47f48c8c5fcde"
+
+EXPECTED_PATCHED_ENTRY_SHA256 = {
+    "AndroidManifest.xml": "79607bc5f3e52a677d749a1f4cc169c7b24a50695813f35addd316f5d728a6a9",
+    "assets/photo/photo_480_640.h264": "cccc9d13ea0b0558b088ddec22f3195b6300f0af273e7e5c5092cced4738f420",
+    "assets/photo/photo_480_640.h265": "0bb0feb543db441dade1cd224972c11b6fd1917dfb5b6defbcf99574b5e4dc8c",
+    "classes.dex": "16266aed9c7b84195aba5ca2f0d7347175fb7e9b12dd0ce7b7646bb723e5827c",
+    "classes2.dex": "15bcceb0cfdcf0c28c77597f286910caa9c02882fa7aab3d77316972e4c9abbd",
+    "lib/arm64-v8a/libcrypto_hwims.so": "37d18f74253c15c50ac87ba343e7f8659c24eee2915b7ea8c28dad8b20d21b23",
+    "lib/arm64-v8a/libhw_media.so": "a79e784b0d68f0d1e6e431f69f2f002b1a09ddc8cbcb3ab79252e480bbae9c20",
+    "lib/arm64-v8a/libhw_sys.so": "17b1d49aeae2c38d39bf7a8186c79de3facbadd5a750e6490b855825fda350d5",
+    "lib/arm64-v8a/liblogin.so": "586e5fdcd804f3b75dc601e7394c34dee64554dd4e167fce46596ea820a4591f",
+    "lib/arm64-v8a/libmvd_hme_vt.so": "630e1cf5701d813726cdb26183f69cafd3c668f23498122362b404369479a06c",
+    "lib/arm64-v8a/libsci.so": "584343a789bbf1d62ad083778e2671425ab6e077d798f927713a25b9b57c9624",
+    "lib/arm64-v8a/libsci_ssconf.so": "19f8e75b53e99f432b3599648b0c00109268e077b2130a475a53bc3b21488277",
+    "lib/arm64-v8a/libsci_tls_default.so": "e3938954068850cb7bb88e4d5109fe79bd6118d0b031541c5eadc63fbefd12c5",
+    "lib/arm64-v8a/libsecurec.so": "de2967893b84cb2bd52c3ac3b1da5907d763545661e228eb791c9a206113b695",
+    "lib/arm64-v8a/libssl_hwims.so": "481efb8ca385c1db62034b5b7516e144dd1190c0a551af5b3a7023323ee1f9b0",
+    "lib/arm64-v8a/libtls_default.so": "e311f72d54f4d5cc8e0338cd72c3b722abbf6eaa37c9e6256a369c0847fe6edb",
+    "lib/arm64-v8a/libut.so": "b310fab6cbe68ca7379e68b161c73ffb92825025dab36d9308af0bc8d19b74e7",
+    "lib/arm64-v8a/libvsc.so": "db0dbe9742ccc24fc397bb0945bc04d065de416cf10990cda8b096a87da9388f",
+    "res/drawable-xxhdpi-v4/ic_launcher.png": "930f06f943d9e862e39d91a0ebfce40fd261dd36ca5c43eac7ae0956429030f4",
+    "res/xml/hw_ims_config.xml": "e21630ab90a55de897d193b52dfb0b7334eacca9df9bdf2729d64ef11e4601cf",
+    "resources.arsc": "6d2b749f6267671d83fe46fadf6cfd001eba62da2e2ab52c31f4a8aff432284a",
+}
+
 APEX_BOOT_ARCHIVES = (
     "com.android.runtime.release.apex",
     "com.android.conscrypt.apex",
@@ -1058,17 +1084,72 @@ def _resolve_android_and_shim_dirs(module_dir: Path) -> tuple[Path, Path]:
     return android_root, shim_dir
 
 
+def repack_verified_patched_apk(src_apk: Path, out_apk: Path) -> None:
+    """Verify every payload entry of a patched/signed HwIms.apk and repack deterministically."""
+    entries: dict[str, bytes] = {}
+    try:
+        with zipfile.ZipFile(src_apk, "r") as zin:
+            for info in zin.infolist():
+                name = info.filename
+                if name.startswith("META-INF/") or name.endswith("/"):
+                    continue
+                if name in entries:
+                    raise ValueError(f"Duplicate ZIP entry in HwIms.apk: {name}")
+                entries[name] = zin.read(name)
+    except zipfile.BadZipFile as exc:
+        raise ValueError(f"Invalid HwIms.apk ZIP container: {src_apk}") from exc
+
+    missing = sorted(set(EXPECTED_PATCHED_ENTRY_SHA256) - set(entries))
+    extra = sorted(set(entries) - set(EXPECTED_PATCHED_ENTRY_SHA256))
+    if missing or extra:
+        raise ValueError(
+            f"HwIms.apk patched entry set mismatch (missing={missing}, extra={extra})"
+        )
+    for name, expected_sha in EXPECTED_PATCHED_ENTRY_SHA256.items():
+        actual_sha = hashlib.sha256(entries[name]).hexdigest()
+        if actual_sha != expected_sha:
+            raise ValueError(
+                f"HwIms.apk entry SHA-256 mismatch for {name}: expected {expected_sha}, got {actual_sha}"
+            )
+
+    jni_libs = {
+        name[len("lib/arm64-v8a/") :]: data
+        for name, data in entries.items()
+        if name.startswith("lib/arm64-v8a/")
+    }
+    out_apk.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=out_apk.parent) as td:
+        tdp = Path(td)
+        classes_dex = tdp / "classes.dex"
+        classes2_dex = tdp / "classes2.dex"
+        tmp_out = tdp / "repacked.apk"
+        classes_dex.write_bytes(entries["classes.dex"])
+        classes2_dex.write_bytes(entries["classes2.dex"])
+        _write_deterministic_apk(src_apk, classes_dex, classes2_dex, jni_libs, tmp_out)
+        actual_out_sha = _sha256(tmp_out)
+        if actual_out_sha != EXPECTED_OUTPUT_SHA256:
+            raise ValueError(
+                f"Normalized HwIms.apk SHA-256 mismatch: expected {EXPECTED_OUTPUT_SHA256}, got {actual_out_sha}"
+            )
+        os.replace(tmp_out, out_apk)
+
+
 def blob_fixup(ctx, file, file_path, *args, **kwargs):
     destination = Path(file_path)
     orig_sha256 = _sha256(destination)
-    if orig_sha256 != EXPECTED_INPUT_SHA256["app/HwIms/HwIms.apk"]:
-        raise ValueError(
-            f"HwIms.apk input SHA-256 mismatch: expected {EXPECTED_INPUT_SHA256['app/HwIms/HwIms.apk']}, got {orig_sha256}"
-        )
-    module_dir = Path(ctx.module_dir).resolve()
-    emui_system_dir = _resolve_emui_system_dir()
-    android_root, shim_dir = _resolve_android_and_shim_dirs(module_dir)
-    build_patched_hwims_apk(emui_system_dir, android_root, shim_dir, destination)
-    print(
-        f"BLA HwIms.apk rebuilt deterministically: {orig_sha256} -> {_sha256(destination)}"
-    )
+    if orig_sha256 == EXPECTED_OUTPUT_SHA256:
+        return
+    if orig_sha256 == EXPECTED_INPUT_SHA256["app/HwIms/HwIms.apk"]:
+        module_dir = Path(ctx.module_dir).resolve()
+        emui_system_dir = _resolve_emui_system_dir()
+        android_root, shim_dir = _resolve_android_and_shim_dirs(module_dir)
+        build_patched_hwims_apk(emui_system_dir, android_root, shim_dir, destination)
+        actual_out = _sha256(destination)
+        if actual_out != EXPECTED_OUTPUT_SHA256:
+            raise ValueError(
+                f"Rebuilt HwIms.apk SHA-256 mismatch: expected {EXPECTED_OUTPUT_SHA256}, got {actual_out}"
+            )
+        print(f"BLA HwIms.apk rebuilt deterministically: {orig_sha256} -> {actual_out}")
+        return
+    repack_verified_patched_apk(destination, destination)
+    print(f"BLA HwIms.apk normalized deterministically: {orig_sha256} -> {_sha256(destination)}")

@@ -25,6 +25,17 @@ EXPECTED_INPUT_SHA256 = {
     "lib64/libc_secshared.so": "b534bb3e8ca226d169875b7027daec8606d9dd86d1a356498adb8fe7abfbd778",
 }
 
+EXPECTED_OUTPUT_SHA256 = "e0682469ecb149750bd96817d6779e239f55a356b9921feebbaa4c7d4e677ae1"
+
+EXPECTED_PATCHED_ENTRY_SHA256 = {
+    "AndroidManifest.xml": "ee51d0d4e9b7a7cec6b598cfd37e40e6d4783292fe0cc583c627a63c7f3687a8",
+    "classes.dex": "3e0b70ce421f9165a0217b658a582fdfc6ffc65a7f0a3ca00bd14b3f51f58bc6",
+    "classes2.dex": "7b6d73b019400022541360ffd574d5b0d2334a5baf242c29eb0e78d18ca48264",
+    "lib/arm64-v8a/libc_secshared.so": "b534bb3e8ca226d169875b7027daec8606d9dd86d1a356498adb8fe7abfbd778",
+    "lib/arm64-v8a/libvowifiqoe.so": "f570667ad5d91da5626ee64969567bec4ad93a50f7615a88be1263a057ed834c",
+    "resources.arsc": "4962fe5de7b9b920dcc73366770d2f6e218d13c8a96df5a530287593ab60c469",
+}
+
 APEX_BOOT_ARCHIVES = (
     "com.android.runtime.release.apex",
     "com.android.conscrypt.apex",
@@ -875,17 +886,72 @@ def _resolve_android_and_shim_dirs(module_dir: Path) -> tuple[Path, Path]:
     return android_root, shim_dir
 
 
+def repack_verified_patched_apk(src_apk: Path, out_apk: Path) -> None:
+    """Verify every payload entry of a patched/signed Mapcon.apk and repack deterministically."""
+    entries: dict[str, bytes] = {}
+    try:
+        with zipfile.ZipFile(src_apk, "r") as zin:
+            for info in zin.infolist():
+                name = info.filename
+                if name.startswith("META-INF/") or name.endswith("/"):
+                    continue
+                if name in entries:
+                    raise ValueError(f"Duplicate ZIP entry in Mapcon.apk: {name}")
+                entries[name] = zin.read(name)
+    except zipfile.BadZipFile as exc:
+        raise ValueError(f"Invalid Mapcon.apk ZIP container: {src_apk}") from exc
+
+    missing = sorted(set(EXPECTED_PATCHED_ENTRY_SHA256) - set(entries))
+    extra = sorted(set(entries) - set(EXPECTED_PATCHED_ENTRY_SHA256))
+    if missing or extra:
+        raise ValueError(
+            f"Mapcon.apk patched entry set mismatch (missing={missing}, extra={extra})"
+        )
+    for name, expected_sha in EXPECTED_PATCHED_ENTRY_SHA256.items():
+        actual_sha = hashlib.sha256(entries[name]).hexdigest()
+        if actual_sha != expected_sha:
+            raise ValueError(
+                f"Mapcon.apk entry SHA-256 mismatch for {name}: expected {expected_sha}, got {actual_sha}"
+            )
+
+    jni_libs = {
+        name[len("lib/arm64-v8a/") :]: data
+        for name, data in entries.items()
+        if name.startswith("lib/arm64-v8a/")
+    }
+    out_apk.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=out_apk.parent) as td:
+        tdp = Path(td)
+        classes_dex = tdp / "classes.dex"
+        classes2_dex = tdp / "classes2.dex"
+        tmp_out = tdp / "repacked.apk"
+        classes_dex.write_bytes(entries["classes.dex"])
+        classes2_dex.write_bytes(entries["classes2.dex"])
+        _write_deterministic_apk(src_apk, classes_dex, classes2_dex, jni_libs, tmp_out)
+        actual_out_sha = _sha256(tmp_out)
+        if actual_out_sha != EXPECTED_OUTPUT_SHA256:
+            raise ValueError(
+                f"Normalized Mapcon.apk SHA-256 mismatch: expected {EXPECTED_OUTPUT_SHA256}, got {actual_out_sha}"
+            )
+        os.replace(tmp_out, out_apk)
+
+
 def blob_fixup(ctx, file, file_path, *args, **kwargs):
     destination = Path(file_path)
     orig_sha256 = _sha256(destination)
-    if orig_sha256 != EXPECTED_INPUT_SHA256["app/Mapcon/Mapcon.apk"]:
-        raise ValueError(
-            f"Mapcon.apk input SHA-256 mismatch: expected {EXPECTED_INPUT_SHA256['app/Mapcon/Mapcon.apk']}, got {orig_sha256}"
-        )
-    module_dir = Path(ctx.module_dir).resolve()
-    emui_system_dir = _resolve_emui_system_dir()
-    android_root, shim_dir = _resolve_android_and_shim_dirs(module_dir)
-    build_patched_mapcon_apk(emui_system_dir, android_root, shim_dir, destination)
-    print(
-        f"BLA Mapcon.apk rebuilt deterministically: {orig_sha256} -> {_sha256(destination)}"
-    )
+    if orig_sha256 == EXPECTED_OUTPUT_SHA256:
+        return
+    if orig_sha256 == EXPECTED_INPUT_SHA256["app/Mapcon/Mapcon.apk"]:
+        module_dir = Path(ctx.module_dir).resolve()
+        emui_system_dir = _resolve_emui_system_dir()
+        android_root, shim_dir = _resolve_android_and_shim_dirs(module_dir)
+        build_patched_mapcon_apk(emui_system_dir, android_root, shim_dir, destination)
+        actual_out = _sha256(destination)
+        if actual_out != EXPECTED_OUTPUT_SHA256:
+            raise ValueError(
+                f"Rebuilt Mapcon.apk SHA-256 mismatch: expected {EXPECTED_OUTPUT_SHA256}, got {actual_out}"
+            )
+        print(f"BLA Mapcon.apk rebuilt deterministically: {orig_sha256} -> {actual_out}")
+        return
+    repack_verified_patched_apk(destination, destination)
+    print(f"BLA Mapcon.apk normalized deterministically: {orig_sha256} -> {_sha256(destination)}")

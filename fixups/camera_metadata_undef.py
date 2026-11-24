@@ -7,6 +7,7 @@ import struct
 from pathlib import Path
 
 EXPECTED_SHA256 = "55289057c2a27c5cf66c380ab3cb2fb3b3fed021340f49178e1f26968df2e746"
+EXPECTED_OUTPUT_SHA256 = "9da5aa3c774d491014866e34bcda47dfea4ec01074c02263225dc684ef62c772"
 TARGET_SYMBOLS = (
     b"camera_metadata_section_bounds",
     b"camera_metadata_section_names",
@@ -16,7 +17,10 @@ EXPECTED_TABLE_SIZE = 256
 
 def patch_camera_metadata_undef(data: bytes) -> bytes:
     """Rewrite stale 256-byte section tables in .dynsym to SHN_UNDEF."""
-    if hashlib.sha256(data).hexdigest() != EXPECTED_SHA256:
+    digest = hashlib.sha256(data).hexdigest()
+    if digest == EXPECTED_OUTPUT_SHA256:
+        return data
+    if digest != EXPECTED_SHA256:
         raise ValueError(
             "BLA CameraDaemon input SHA-256 mismatch; review the binary before patching"
         )

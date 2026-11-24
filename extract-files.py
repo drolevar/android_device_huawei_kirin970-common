@@ -15,6 +15,14 @@ from extract_utils.main import (
     ExtractUtils,
     ExtractUtilsModule,
 )
+from extract_utils.module import (
+    PinnedFileProcessResult,
+)
+from extract_utils.utils import (
+    Color,
+    color_print,
+    file_path_sha1,
+)
 
 namespace_imports = [
     'hardware/huawei',
@@ -45,18 +53,18 @@ blob_fixups: blob_fixups_user_type = {
         ),
     'vendor/etc/init/vendor.huawei.hardware.biometrics.fingerprint@2.2-service.rc': blob_fixup()
         .regex_replace(
-            r'    interface vendor\.huawei\.hardware\.biometrics\.fingerprint@2\.2::IExtBiometricsFingerprint default',
+            r'(?<!    interface vendor\.huawei\.hardware\.biometrics\.fingerprint@2\.1::IExtBiometricsFingerprint default\n)    interface vendor\.huawei\.hardware\.biometrics\.fingerprint@2\.2::IExtBiometricsFingerprint default',
             r'    interface android.hardware.biometrics.fingerprint@2.1::IBiometricsFingerprint default\n'
             r'    interface vendor.huawei.hardware.biometrics.fingerprint@2.1::IExtBiometricsFingerprint default\n'
             r'    interface vendor.huawei.hardware.biometrics.fingerprint@2.2::IExtBiometricsFingerprint default',
         ),
     'vendor/etc/init/rild.rc': blob_fixup()
         .regex_replace(
-            r'(service vendor\.ril-daemon /vendor/bin/hw/rild)',
+            r'(?<!on property:vendor\.rilprops_ready=1\n    start vendor\.ril-daemon\n\n)(service vendor\.ril-daemon /vendor/bin/hw/rild)',
             r'on property:vendor.rilprops_ready=1\n    start vendor.ril-daemon\n\n\1',
         )
        .regex_replace(
-            r'(\n    capabilities BLOCK_SUSPEND NET_ADMIN NET_RAW)',
+            r'(\n    capabilities BLOCK_SUSPEND NET_ADMIN NET_RAW)(?!\n    disabled\b)',
             r'\1\n    disabled',
         ),
     (
@@ -173,7 +181,50 @@ def write_opaque_xml_packages(ctx, _packages_ctx):
     )
 
 
-module = ExtractUtilsModule(
+SIGNED_LINEAGE_APK_DESTS = frozenset(
+    {
+        'system/app/HwIms/HwIms.apk',
+        'system/app/Mapcon/Mapcon.apk',
+    }
+)
+
+
+class Kirin970ExtractUtilsModule(ExtractUtilsModule):
+    def process_pinned_file(self, file, file_path, restored):
+        action = 'restored' if restored else 'found'
+        if file.dst in SIGNED_LINEAGE_APK_DESTS and file.fixup_hash is not None:
+            pre_fixup_hash = file_path_sha1(file_path)
+            if pre_fixup_hash not in (file.hash, file.fixup_hash):
+                try:
+                    self.fixup_module_file(file, file_path)
+                except ValueError as exc:
+                    if restored:
+                        color_print(
+                            f'{file.dst}: {action} APK failed LineageOS normalization ({exc}), trying source',
+                            color=Color.YELLOW,
+                        )
+                        return PinnedFileProcessResult.MISMATCH
+                    raise
+                post_fixup_hash = file_path_sha1(file_path)
+                if post_fixup_hash == file.fixup_hash:
+                    color_print(
+                        f'{file.dst}: {action} signed LineageOS APK normalized to fixup hash {file.fixup_hash}',
+                        color=Color.GREEN,
+                    )
+                    return PinnedFileProcessResult.MATCH
+                if restored:
+                    color_print(
+                        f'{file.dst}: {action} normalized hash {post_fixup_hash} != {file.fixup_hash}, trying source',
+                        color=Color.YELLOW,
+                    )
+                    return PinnedFileProcessResult.MISMATCH
+                raise ValueError(
+                    f'{file.dst}: normalized SHA-1 {post_fixup_hash} != expected {file.fixup_hash}'
+                )
+        return super().process_pinned_file(file, file_path, restored)
+
+
+module = Kirin970ExtractUtilsModule(
     'kirin970-common',
     'huawei',
     blob_fixups=blob_fixups,

@@ -6,9 +6,12 @@ import hashlib
 import io
 import os
 import tempfile
+import zipfile
 from types import SimpleNamespace
 from unittest import mock
 from extract_utils.file import File, FileArgs
+from extract_utils.fixups_blob import BlobFixupCtx
+from extract_utils.module import PinnedFileProcessResult
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -242,6 +245,226 @@ class Attempt13MapconFixupTests(unittest.TestCase):
             mod.verify_mapcon_inputs(
                 tdp, {"app/Mapcon/Mapcon.apk": hashlib.sha256(b"tampered").hexdigest()}
             )
+
+
+class Attempt22IdempotencyAndDualSourceTests(unittest.TestCase):
+    def _load(self, rel):
+        spec = importlib.util.spec_from_file_location(rel.replace("/", "_"), ROOT / rel)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    def test_shadowed_audio_volume_xmls_dropped_and_count_is_972(self):
+        files = [
+            File(line.strip())
+            for line in (ROOT / "proprietary-files.txt").read_text().splitlines()
+            if line.strip() and not line.lstrip().startswith("#")
+        ]
+        dsts = {f.dst for f in files}
+        self.assertEqual(len(files), 972)
+        self.assertNotIn("vendor/etc/audio_policy_volumes.xml", dsts)
+        self.assertNotIn("vendor/etc/default_volume_tables.xml", dsts)
+        common_mk = (ROOT / "common.mk").read_text()
+        self.assertIn("audio_policy_volumes.xml", common_mk)
+        self.assertIn("default_volume_tables.xml", common_mk)
+
+    def test_rc_fixups_are_strictly_idempotent(self):
+        recipe = self._load("extract-files.py")
+        fixtures = {
+            "vendor/etc/init/vendor.huawei.hardware.biometrics.fingerprint@2.2-service.rc": (
+                b"service vendor.fps_hal /vendor/bin/hw/vendor.huawei.hardware.biometrics.fingerprint@2.2-service\n"
+                b"    class late_start\n"
+                b"    interface vendor.huawei.hardware.biometrics.fingerprint@2.2::IExtBiometricsFingerprint default\n"
+            ),
+            "vendor/etc/init/rild.rc": (
+                b"service vendor.ril-daemon /vendor/bin/hw/rild\n"
+                b"    class main\n"
+                b"    capabilities BLOCK_SUSPEND NET_ADMIN NET_RAW\n"
+            ),
+            "vendor/etc/init/android.hardware.drm@1.2-service.widevine.rc": (
+                b"on post-fs-data\n"
+                b"    mkdir /data/vendor/mediadrm 0770 media mediadrm\n"
+                b"    start vendor.move_data_sh\n\n"
+                b"service vendor.move_data_sh /system/bin/move_widevine_data.sh\n"
+                b"    class main\n"
+                b"    oneshot\n\n"
+                b"service vendor.drm-widevine-hal-1-2 /vendor/preavs/bin/hw/android.hardware.drm@1.2-service.widevine\n"
+                b"    setenv LD_LIBRARY_PATH /vendor/preavs/lib\n"
+            ),
+        }
+        with tempfile.TemporaryDirectory() as td:
+            for rel, payload in fixtures.items():
+                with self.subTest(rel=rel):
+                    fixup = recipe.module.blob_fixups[rel]
+                    p = Path(td) / Path(rel).name
+                    p.write_bytes(payload)
+                    fixup.run(BlobFixupCtx(str(ROOT)), File(rel), str(p))
+                    first = p.read_bytes()
+                    fixup.run(BlobFixupCtx(str(ROOT)), File(rel), str(p))
+                    second = p.read_bytes()
+                    self.assertEqual(first, second)
+
+    def test_binary_fixups_are_idempotent_for_patched_and_final_outputs_and_reject_tamper(self):
+        import struct
+
+        smartae = self._load("fixups/smartae.py")
+        hdr = bytearray(64)
+        hdr[:6] = b"\x7fELF\x02\x01"
+        hdr[18:20] = b"\xb7\x00"
+        blob_in = bytes(hdr) + bytes.fromhex("9F020AB9")
+        with mock.patch.object(smartae, "EXPECTED_SHA256", hashlib.sha256(blob_in).hexdigest()):
+            out = smartae.patch_smartae(blob_in)
+        out_sha = hashlib.sha256(out).hexdigest()
+        with mock.patch.object(smartae, "EXPECTED_PATCHED_SHA256", out_sha):
+            self.assertEqual(smartae.patch_smartae(out), out)
+        out_final = out + b"\x00"
+        with mock.patch.object(smartae, "EXPECTED_FINAL_SHA256", hashlib.sha256(out_final).hexdigest()):
+            self.assertEqual(smartae.patch_smartae(out_final), out_final)
+        with self.assertRaisesRegex(ValueError, "SHA-256"):
+            smartae.patch_smartae(out + b"\x01")
+
+        cam = self._load("fixups/camera_metadata_undef.py")
+        dynstr = b"\x00camera_metadata_section_bounds\x00camera_metadata_section_names\x00"
+        dynsym = struct.pack("<IBBHQQ", 0, 0, 0, 0, 0, 0)
+        dynsym += struct.pack("<IBBHQQ", 1, 0x11, 0, 11, 0x2d540, 256)
+        dynsym += struct.pack("<IBBHQQ", 32, 0x11, 0, 11, 0x2d440, 256)
+        sh_off = 64 + len(dynstr) + len(dynsym)
+        ehdr = bytearray(64)
+        ehdr[:6] = b"\x7fELF\x02\x01"
+        ehdr[18:20] = b"\xb7\x00"
+        struct.pack_into("<Q", ehdr, 40, sh_off)
+        struct.pack_into("<HH", ehdr, 58, 64, 3)
+        cam_in = bytes(ehdr) + dynstr + dynsym + bytes(64) + struct.pack("<IIQQQQIIQQ", 0, 3, 2, 0, 64, len(dynstr), 0, 0, 1, 0) + struct.pack("<IIQQQQIIQQ", 0, 11, 2, 0, 64 + len(dynstr), len(dynsym), 1, 1, 8, 24)
+        with mock.patch.object(cam, "EXPECTED_SHA256", hashlib.sha256(cam_in).hexdigest()):
+            cam_out = cam.patch_camera_metadata_undef(cam_in)
+        with mock.patch.object(cam, "EXPECTED_OUTPUT_SHA256", hashlib.sha256(cam_out).hexdigest()):
+            self.assertEqual(cam.patch_camera_metadata_undef(cam_out), cam_out)
+        with self.assertRaisesRegex(ValueError, "SHA-256"):
+            cam.patch_camera_metadata_undef(cam_out + b"\x00")
+
+        ril = self._load("fixups/libril_voicereg_v12.py")
+        buf64 = bytearray(0x752C8 + 64)
+        buf64[:6] = b"\x7fELF\x02\x01"
+        buf64[18:20] = b"\xb7\x00"
+        buf64[0x752C8 : 0x752C8 + len(ril.WINDOW_64_OLD)] = ril.WINDOW_64_OLD
+        with mock.patch.object(ril, "EXPECTED_SHA256_64", hashlib.sha256(buf64).hexdigest()):
+            ril64_out = ril.patch_libril_voicereg(bytes(buf64))
+        with mock.patch.object(ril, "EXPECTED_OUTPUT_SHA256_64", hashlib.sha256(ril64_out).hexdigest()):
+            self.assertEqual(ril.patch_libril_voicereg(ril64_out), ril64_out)
+
+    def test_repack_verified_patched_apk_normalizes_resigned_and_rejects_tamper(self):
+        for rel, apk_name in (
+            ("fixups/build_hwims_apk.py", "HwIms.apk"),
+            ("fixups/build_mapcon_apk.py", "Mapcon.apk"),
+        ):
+            with self.subTest(apk=apk_name):
+                mod = self._load(rel)
+                with tempfile.TemporaryDirectory() as td:
+                    tdp = Path(td)
+                    classes_dex = tdp / "classes.dex"
+                    classes2_dex = tdp / "classes2.dex"
+                    classes_dex.write_bytes(b"dex\n035\x00PAYLOAD1")
+                    classes2_dex.write_bytes(b"dex\n035\x00PAYLOAD2")
+                    jni_libs = {"libfoo.so": b"\x7fELF" + b"\x00" * 60}
+                    base_unsigned = tdp / f"base_{apk_name}"
+                    with zipfile.ZipFile(base_unsigned, "w") as zf:
+                        zf.writestr("AndroidManifest.xml", b"<manifest/>")
+                        zf.writestr("resources.arsc", b"ARSC_BYTES")
+                        zf.writestr("assets/extra.bin", b"EXTRA_DATA")
+                    expected_apk = tdp / f"expected_{apk_name}"
+                    mod._write_deterministic_apk(
+                        base_unsigned, classes_dex, classes2_dex, jni_libs, expected_apk
+                    )
+                    expected_out_sha = hashlib.sha256(expected_apk.read_bytes()).hexdigest()
+                    entry_hashes = {}
+                    with zipfile.ZipFile(expected_apk, "r") as zf:
+                        for info in zf.infolist():
+                            entry_hashes[info.filename] = hashlib.sha256(
+                                zf.read(info.filename)
+                            ).hexdigest()
+
+                    # Construct a Soong/apksigner-style signed copy: different timestamps,
+                    # META-INF signatures, reordered entries, and trailing signing block junk.
+                    signed_apk = tdp / f"signed_{apk_name}"
+                    with zipfile.ZipFile(signed_apk, "w") as zf:
+                        zf.writestr("META-INF/MANIFEST.MF", b"Manifest-Version: 1.0\n")
+                        zf.writestr("META-INF/CERT.SF", b"Signature-Version: 1.0\n")
+                        zf.writestr("META-INF/CERT.RSA", b"DER_SIG")
+                        with zipfile.ZipFile(expected_apk, "r") as src_zf:
+                            for info in reversed(src_zf.infolist()):
+                                zi = zipfile.ZipInfo(info.filename, date_time=(2026, 11, 24, 12, 0, 0))
+                                zi.compress_type = zipfile.ZIP_DEFLATED
+                                zf.writestr(zi, src_zf.read(info.filename))
+                    with signed_apk.open("ab") as fh:
+                        # Trailing bytes outside entries still allow Python ZipFile central-dir seek,
+                        # simulating extra APK metadata before EOCD? Actually insert dummy comment
+                        # via ZipFile.comment so ZIP remains valid!
+                        pass
+                    with zipfile.ZipFile(signed_apk, "a") as zf:
+                        zf.comment = b"APK_SIG_BLOCK_SIMULATION"
+
+                    normalized = tdp / f"norm_{apk_name}"
+                    with (
+                        mock.patch.object(mod, "EXPECTED_OUTPUT_SHA256", expected_out_sha),
+                        mock.patch.object(mod, "EXPECTED_PATCHED_ENTRY_SHA256", entry_hashes),
+                    ):
+                        mod.repack_verified_patched_apk(signed_apk, normalized)
+                        self.assertEqual(normalized.read_bytes(), expected_apk.read_bytes())
+                        # Calling blob_fixup on already-normalized APK is an exact no-op.
+                        mod.blob_fixup(SimpleNamespace(module_dir=str(ROOT)), File(apk_name), str(normalized))
+                        self.assertEqual(normalized.read_bytes(), expected_apk.read_bytes())
+
+                        # Tampering classes2.dex must raise ValueError.
+                        tampered = tdp / f"tampered_{apk_name}"
+                        with zipfile.ZipFile(tampered, "w") as zf:
+                            for k in entry_hashes:
+                                data = (
+                                    b"TAMPERED_DEX"
+                                    if k == "classes2.dex"
+                                    else zipfile.ZipFile(expected_apk, "r").read(k)
+                                )
+                                zf.writestr(k, data)
+                        with self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
+                            mod.repack_verified_patched_apk(tampered, tdp / "fail.apk")
+
+                        # Adding an unexpected extra non-META-INF entry must raise ValueError.
+                        extra_apk = tdp / f"extra_{apk_name}"
+                        with zipfile.ZipFile(extra_apk, "w") as zf:
+                            for k in entry_hashes:
+                                zf.writestr(k, zipfile.ZipFile(expected_apk, "r").read(k))
+                            zf.writestr("classes3.dex", b"UNEXPECTED")
+                        with self.assertRaisesRegex(ValueError, "entry set mismatch"):
+                            mod.repack_verified_patched_apk(extra_apk, tdp / "fail2.apk")
+
+    def test_kirin970_module_handles_signed_lineage_apk_restored_and_source(self):
+        recipe = self._load("extract-files.py")
+        with tempfile.TemporaryDirectory() as td:
+            apk_path = Path(td) / "HwIms.apk"
+            apk_path.write_bytes(b"SIGNED_APK_BYTES")
+            canonical_bytes = b"CANONICAL_UNSIGNED_APK"
+            canonical_sha1 = hashlib.sha1(canonical_bytes).hexdigest()
+            f = File(f"system/app/HwIms/HwIms.apk|{'0'*40}|{canonical_sha1}")
+
+            def fake_fixup(_file, path):
+                Path(path).write_bytes(canonical_bytes)
+
+            with mock.patch.object(recipe.module, "fixup_module_file", side_effect=fake_fixup):
+                res = recipe.module.process_pinned_file(f, str(apk_path), restored=False)
+                self.assertEqual(res, PinnedFileProcessResult.MATCH)
+                self.assertEqual(apk_path.read_bytes(), canonical_bytes)
+
+            # Corrupt restored APK falls back cleanly to MISMATCH, while corrupt source raises ValueError.
+            apk_path.write_bytes(b"CORRUPT")
+            with mock.patch.object(
+                recipe.module, "fixup_module_file", side_effect=ValueError("bad zip")
+            ):
+                self.assertEqual(
+                    recipe.module.process_pinned_file(f, str(apk_path), restored=True),
+                    PinnedFileProcessResult.MISMATCH,
+                )
+                with self.assertRaisesRegex(ValueError, "bad zip"):
+                    recipe.module.process_pinned_file(f, str(apk_path), restored=False)
+
 
 if __name__ == "__main__":
     unittest.main()

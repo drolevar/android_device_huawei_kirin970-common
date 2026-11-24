@@ -27,8 +27,6 @@ vendor/lib64/libtfa98xx.so|140bf02d98dae15a706941ffbbed0d6efdaecc14
 
 # Audio Config
 vendor/etc/audio/audiohal_alg_store.xml|0b78cb79893f8f794bc58d8b77ce9e8440a6266f
-vendor/etc/audio_policy_volumes.xml|59ff6187c6aa22babcb04e901b2625f6e7e2bcb7
-vendor/etc/default_volume_tables.xml|5e1edff0f9fba4b8d47b6e871ab8ae411faf2c75
 
 # Audio Effects
 vendor/lib/soundfx/libhuaweiprocessing.so|af7bdc9b4cf13a87d6f044d31f43148d5b208468
