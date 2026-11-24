@@ -213,6 +213,20 @@ class Attempt13MapconFixupTests(unittest.TestCase):
         ):
             self.assertIn(bin_or_lib, all_by_src)
             self.assertIsNotNone(all_by_src[bin_or_lib].hash)
+        self.assertEqual(
+            all_by_src["vendor/bin/iked"].fixup_hash,
+            "9a56b9fb7d90fee7cbf7529cc1dea3f837aad1c7",
+        )
+        self.assertEqual(
+            all_by_src["vendor/lib64/libracoon2.so"].fixup_hash,
+            "f406737e869db67b0452ff73d3733c62bfc501ef",
+        )
+        spec = importlib.util.spec_from_file_location("common_recipe", ROOT / "extract-files.py")
+        recipe = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(recipe)
+        self.assertTrue(recipe.module.should_fixup_file(all_by_src["vendor/bin/iked"]))
+        self.assertTrue(recipe.module.should_fixup_file(all_by_src["vendor/lib64/libracoon2.so"]))
+        self.assertIn("libcrypto-v29", (ROOT / "common.mk").read_text())
 
     def test_verify_mapcon_inputs_rejects_missing_or_tampered_inputs(self):
         mod = self._load()

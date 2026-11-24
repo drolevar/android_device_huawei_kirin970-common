@@ -137,6 +137,11 @@ blob_fixups: blob_fixups_user_type = {
         'vendor/lib64/libcamera_perftrace.so',
     ): blob_fixup()
         .replace_needed('libtinyxml2.so', 'libtinyxml2-v29.so'),
+    'vendor/bin/iked': blob_fixup()
+        .replace_needed('libcrypto.so', 'libcrypto-v29.so'),
+    'vendor/lib64/libracoon2.so': blob_fixup()
+        .remove_needed('libssl.so')
+        .remove_needed('libcrypto.so'),
     'system/app/HwIms/HwIms.apk': blob_fixup()
         .patch_file('fixups/build_hwims_apk.py', need_tmp_dir=False),
     'system/app/Mapcon/Mapcon.apk': blob_fixup()
