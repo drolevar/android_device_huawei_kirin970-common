@@ -25,12 +25,12 @@ EXPECTED_INPUT_SHA256 = {
     "lib64/libc_secshared.so": "b534bb3e8ca226d169875b7027daec8606d9dd86d1a356498adb8fe7abfbd778",
 }
 
-EXPECTED_OUTPUT_SHA256 = "e0682469ecb149750bd96817d6779e239f55a356b9921feebbaa4c7d4e677ae1"
+EXPECTED_OUTPUT_SHA256 = "344750638179642bde395d981daa6bcd1bb005196df9d46bc081816ad20c4c0d"
 
 EXPECTED_PATCHED_ENTRY_SHA256 = {
     "AndroidManifest.xml": "ee51d0d4e9b7a7cec6b598cfd37e40e6d4783292fe0cc583c627a63c7f3687a8",
-    "classes.dex": "3e0b70ce421f9165a0217b658a582fdfc6ffc65a7f0a3ca00bd14b3f51f58bc6",
-    "classes2.dex": "7b6d73b019400022541360ffd574d5b0d2334a5baf242c29eb0e78d18ca48264",
+    "classes.dex": "caf055236922c7d3cf8aa6d69b1414bb1be9c6b0bba931fe3b1631f8bdb7a314",
+    "classes2.dex": "86556316a1083757c9c24814409e1ef904f1d47fefdc3e31ad7d21855df8e8ec",
     "lib/arm64-v8a/libc_secshared.so": "b534bb3e8ca226d169875b7027daec8606d9dd86d1a356498adb8fe7abfbd778",
     "lib/arm64-v8a/libvowifiqoe.so": "f570667ad5d91da5626ee64969567bec4ad93a50f7615a88be1263a057ed834c",
     "resources.arsc": "4962fe5de7b9b920dcc73366770d2f6e218d13c8a96df5a530287593ab60c469",
@@ -473,13 +473,25 @@ def apply_smali_patches(smali_dir: Path) -> None:
     if reg_rcv_count != 10:
         raise ValueError(f"Expected 10 Mapcon registerReceiver sites, got {reg_rcv_count}")
 
-    # 8. UID 1001 SDK 29+/31+ Telephony & GPS compatibility:
+    # 8. UID 1001 SDK 29+/31+ Telephony, Dual-SIM Slot/Boot Sync & GPS compatibility:
     #    - PhoneStateListener(Integer) throws IllegalArgumentException when UID targetSdk >= Q (37 >= 29)
+    #    - PhoneStateListener(w, byte slotId) must record slotId so TelephonyManager.listen() binds via createForSubscriptionId
+    #    - TelephonyTracker.e(Intent) and init() must resolve SLOT_INDEX / sync pre-loaded dual-SIM states at service start
+    #    - VoWifiQoeService IMS_SERVICE_STATE_CHANGED must prefer HwIms's "slot" extra before resolving "subId"
     #    - TelephonyManager.listen() ignores listener.mSubId unless TelephonyManager.createForSubscriptionId() is used
     #    - LocationManager.getGpsStatus(null) throws UnsupportedOperationException when BLOCK_GPS_STATUS_USAGE is enabled
     psl_t = smali_dir / "com/hisi/mapcon/adapter/t.smali"
     psl_txt = _replace_exact(
         psl_t.read_text(encoding="utf-8"),
+        "    :cond_16\n    iput p2, p0, Lcom/hisi/mapcon/adapter/t;->mPhoneId:I",
+        "    :cond_16\n"
+        "    iput p2, p0, Lcom/hisi/mapcon/adapter/t;->mPhoneId:I\n\n"
+        "    invoke-static {p0, p2}, Lcom/huawei/ims/shim/MapconShim;->recordPhoneStateListenerForSlot(Landroid/telephony/PhoneStateListener;I)V",
+        1,
+        "adapter.t.PhoneStateListener_init_slot",
+    )
+    psl_txt = _replace_exact(
+        psl_txt,
         "    invoke-direct {p0, p1}, Landroid/telephony/PhoneStateListener;-><init>(Ljava/lang/Integer;)V",
         "    invoke-direct {p0}, Landroid/telephony/PhoneStateListener;-><init>()V\n\n"
         "    invoke-static {p0, p1}, Lcom/huawei/ims/HwImsShim;->recordPhoneStateListenerSubId(Landroid/telephony/PhoneStateListener;Ljava/lang/Integer;)V",
@@ -487,6 +499,52 @@ def apply_smali_patches(smali_dir: Path) -> None:
         "adapter.t.PhoneStateListener_init_subId",
     )
     psl_t.write_text(psl_txt, encoding="utf-8")
+
+    tracker_w = smali_dir / "com/hisi/mapcon/adapter/w.smali"
+    tracker_txt = _replace_exact(
+        tracker_w.read_text(encoding="utf-8"),
+        "    const/4 v2, 0x0\n\n"
+        '    const-string v3, "phone"\n\n'
+        "    invoke-virtual {p1, v3, v2}, Landroid/content/Intent;->getIntExtra(Ljava/lang/String;I)I\n\n"
+        "    move-result p1",
+        "    const/4 v2, 0x0\n\n"
+        "    invoke-static {p1, v2}, Lcom/huawei/ims/shim/MapconShim;->extractSimSlotIndex(Landroid/content/Intent;I)I\n\n"
+        "    move-result p1",
+        1,
+        "adapter.w.extractSimSlotIndex",
+    )
+    tracker_txt = _replace_exact(
+        tracker_txt,
+        "    iget-object v1, p0, Lcom/hisi/mapcon/adapter/w;->mContext:Landroid/content/Context;\n\n"
+        "    iget-object p0, p0, Lcom/hisi/mapcon/adapter/w;->mImsReceiver:Landroid/content/BroadcastReceiver;\n\n"
+        '    const-string v2, "com.hisi.permission.VOWIFI_SPECIAL"\n\n'
+        "    invoke-static {v1, p0, v0, v2, v3}, Lcom/huawei/ims/HwImsShim;->registerReceiverCompat(Landroid/content/Context;Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;Ljava/lang/String;Landroid/os/Handler;)Landroid/content/Intent;\n\n"
+        "    return-void",
+        "    iget-object v1, p0, Lcom/hisi/mapcon/adapter/w;->mContext:Landroid/content/Context;\n\n"
+        "    iget-object v4, p0, Lcom/hisi/mapcon/adapter/w;->mImsReceiver:Landroid/content/BroadcastReceiver;\n\n"
+        '    const-string v2, "com.hisi.permission.VOWIFI_SPECIAL"\n\n'
+        "    invoke-static {v1, v4, v0, v2, v3}, Lcom/huawei/ims/HwImsShim;->registerReceiverCompat(Landroid/content/Context;Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;Ljava/lang/String;Landroid/os/Handler;)Landroid/content/Intent;\n\n"
+        "    invoke-static {v1, p0}, Lcom/huawei/ims/shim/MapconShim;->syncInitialSimStates(Landroid/content/Context;Ljava/lang/Object;)V\n\n"
+        "    return-void",
+        1,
+        "adapter.w.syncInitialSimStates",
+    )
+    tracker_w.write_text(tracker_txt, encoding="utf-8")
+
+    qoe_g = smali_dir / "com/hisi/mapcon/vowifiqoe/g.smali"
+    qoe_txt = _replace_exact(
+        qoe_g.read_text(encoding="utf-8"),
+        '    const-string v0, "subId"\n\n'
+        "    invoke-virtual {p2, v0}, Landroid/os/BaseBundle;->getInt(Ljava/lang/String;)I\n\n"
+        "    move-result p2\n\n"
+        "    invoke-static {p2}, Landroid/telephony/SubscriptionManager;->getPhoneId(I)I\n\n"
+        "    move-result p2",
+        "    invoke-static {p2}, Lcom/huawei/ims/shim/MapconShim;->extractImsStatePhoneId(Landroid/os/Bundle;)I\n\n"
+        "    move-result p2",
+        1,
+        "vowifiqoe.g.extractImsStatePhoneId",
+    )
+    qoe_g.write_text(qoe_txt, encoding="utf-8")
 
     loc_f = smali_dir / "com/hisi/mapcon/d/f.smali"
     loc_txt, gps_count = re.subn(

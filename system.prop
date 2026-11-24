@@ -23,6 +23,7 @@ ro.comp.chipset_version=Chipset-boston 102.0.0.001(1ISW)
 # RIL
 persist.radio.defdualltecap=1
 persist.radio.dualltecap=1
+ro.config.hw_uicc_sub_toggle=true
 
 # Sensors
 use_sensorhub_labc=false

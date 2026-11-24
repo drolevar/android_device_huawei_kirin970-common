@@ -200,6 +200,7 @@ class MetadataFstabTests(unittest.TestCase):
         expected_sys_keys = moved | {
             "ro.bpf.kver_override",
             "persist.radio.defdualltecap",
+            "ro.config.hw_uicc_sub_toggle",
             "ro.config.hw_volte_dyn",
             "ro.config.hw_ut_ims",
             "ro.config.hw_vowifi",
