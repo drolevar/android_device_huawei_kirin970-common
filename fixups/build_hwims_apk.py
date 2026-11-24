@@ -283,7 +283,187 @@ def apply_smali_patches(smali_dir: Path) -> None:
         1,
         "HwImsServiceImpl.setVoNrSwitch",
     )
+    # 4b. Seed mIsCarrierConfigChange in HwImsServiceImpl.<init> (when bound after boot broadcast)
+    #     and replace EMUI-only carrierConfigChangeState + legacy "phone" slot extra lookup.
+    itxt = _replace_exact(
+        itxt,
+        "    invoke-direct {p0}, Lcom/huawei/ims/HwImsServiceImpl;->getCurrentCallsAndHangup()V\n\n"
+        "    .line 738\n"
+        '    const-string v1, "HwImsServiceImpl init done"',
+        "    invoke-direct {p0}, Lcom/huawei/ims/HwImsServiceImpl;->getCurrentCallsAndHangup()V\n\n"
+        "    iget-object v1, p0, Lcom/huawei/ims/HwImsServiceImpl;->mContext:Landroid/content/Context;\n\n"
+        "    iget v2, p0, Lcom/huawei/ims/HwImsServiceImpl;->mSlotId:I\n\n"
+        "    invoke-static {v1, v2}, Lcom/huawei/ims/HwImsShim;->isCarrierConfigReadyForSlot(Landroid/content/Context;I)Z\n\n"
+        "    move-result v1\n\n"
+        "    iput-boolean v1, p0, Lcom/huawei/ims/HwImsServiceImpl;->mIsCarrierConfigChange:Z\n\n"
+        "    .line 738\n"
+        '    const-string v1, "HwImsServiceImpl init done"',
+        1,
+        "HwImsServiceImpl.init_carrier_config_ready",
+    )
+    itxt = _replace_exact(
+        itxt,
+        '    const-string v0, "phone"\n\n'
+        "    invoke-virtual {p1, v0, v1}, Landroid/content/Intent;->getIntExtra(Ljava/lang/String;I)I",
+        "    invoke-static {p1}, Lcom/huawei/ims/HwImsShim;->extractCarrierConfigSlotId(Landroid/content/Intent;)I",
+        1,
+        "HwImsServiceImpl.notifyCarrierConfigChanged_slot_extra",
+    )
+    itxt = _replace_exact(
+        itxt,
+        "    .line 792\n"
+        '    const-string v0, "carrierConfigChangeState"\n\n'
+        "    invoke-virtual {p1, v0, v1}, Landroid/content/Intent;->getIntExtra(Ljava/lang/String;I)I\n\n"
+        "    move-result v0\n\n"
+        "    const/4 v2, 0x1\n\n"
+        "    if-ne v0, v2, :cond_20\n\n"
+        "    move v1, v2\n\n"
+        "    :cond_20\n"
+        "    iput-boolean v1, p0, Lcom/huawei/ims/HwImsServiceImpl;->mIsCarrierConfigChange:Z",
+        "    .line 792\n"
+        "    iget-object v0, p0, Lcom/huawei/ims/HwImsServiceImpl;->mContext:Landroid/content/Context;\n\n"
+        "    iget v1, p0, Lcom/huawei/ims/HwImsServiceImpl;->mSlotId:I\n\n"
+        "    invoke-static {v0, v1, p1}, Lcom/huawei/ims/HwImsShim;->isCarrierConfigChangeLoaded(Landroid/content/Context;ILandroid/content/Intent;)Z\n\n"
+        "    move-result v1\n\n"
+        "    iput-boolean v1, p0, Lcom/huawei/ims/HwImsServiceImpl;->mIsCarrierConfigChange:Z",
+        1,
+        "HwImsServiceImpl.notifyCarrierConfigChanged_loaded",
+    )
+    if any(
+        "carrierConfigChangeState" in line and not line.startswith(".field ")
+        for line in itxt.splitlines()
+    ):
+        raise ValueError("Unshimmed EMUI carrierConfigChangeState remained in HwImsServiceImpl")
     impl.write_text(itxt, encoding="utf-8")
+
+    # 4c. Sync mAccessTechMode and ImsRegistrationImplBase tech BEFORE notifyImsVoWiFiState
+    #     so ImsPhoneCallTracker sees IWLAN/LTE registration tech aligned with MmTelCapabilities.
+    htxt = handler.read_text(encoding="utf-8")
+    htxt = _replace_exact(
+        htxt,
+        "    :cond_210\n"
+        "    iget-object v3, v0, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->this$0:Lcom/huawei/ims/HwImsServiceImpl;\n\n"
+        "    invoke-static {v3}, Lcom/huawei/ims/HwImsServiceImpl;->access$1900(Lcom/huawei/ims/HwImsServiceImpl;)Landroid/telephony/ims/feature/MmTelFeature$MmTelCapabilities;\n\n"
+        "    move-result-object v3\n\n"
+        "    .line 1458\n"
+        "    const/4 v4, 0x1\n\n"
+        "    invoke-virtual {v3, v4}, Landroid/telephony/ims/feature/MmTelFeature$MmTelCapabilities;->addCapabilities(I)V\n\n"
+        "    .line 1459\n"
+        '    const-string v3, "REGISTERED"\n\n'
+        "    invoke-direct {v0, v3}, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->notifyImsVoWiFiState(Ljava/lang/String;)V\n\n"
+        "    .line 1460\n"
+        "    iget-object v3, v0, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->this$0:Lcom/huawei/ims/HwImsServiceImpl;\n\n"
+        "    invoke-static {v3, v4}, Lcom/huawei/ims/HwImsServiceImpl;->access$1202(Lcom/huawei/ims/HwImsServiceImpl;I)I\n\n"
+        "    goto :goto_260\n\n"
+        "    .line 1462\n"
+        "    :cond_225\n"
+        "    const/4 v4, 0x1\n\n"
+        "    if-eqz v7, :cond_23b\n\n"
+        "    .line 1463\n"
+        "    iget-object v3, v0, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->this$0:Lcom/huawei/ims/HwImsServiceImpl;\n\n"
+        "    invoke-static {v3}, Lcom/huawei/ims/HwImsServiceImpl;->access$1900(Lcom/huawei/ims/HwImsServiceImpl;)Landroid/telephony/ims/feature/MmTelFeature$MmTelCapabilities;\n\n"
+        "    move-result-object v3\n\n"
+        "    .line 1464\n"
+        "    invoke-virtual {v3, v4}, Landroid/telephony/ims/feature/MmTelFeature$MmTelCapabilities;->addCapabilities(I)V\n\n"
+        "    .line 1465\n"
+        "    invoke-direct {v0, v15}, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->notifyImsVoWiFiState(Ljava/lang/String;)V\n\n"
+        "    .line 1466\n"
+        "    iget-object v3, v0, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->this$0:Lcom/huawei/ims/HwImsServiceImpl;\n\n"
+        "    const/4 v4, 0x0\n\n"
+        "    invoke-static {v3, v4}, Lcom/huawei/ims/HwImsServiceImpl;->access$1202(Lcom/huawei/ims/HwImsServiceImpl;I)I\n\n"
+        "    goto :goto_260\n\n"
+        "    .line 1467\n"
+        "    :cond_23b\n"
+        "    if-eqz v12, :cond_259\n\n"
+        "    iget-object v3, v0, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->this$0:Lcom/huawei/ims/HwImsServiceImpl;\n\n"
+        "    invoke-static {v3}, Lcom/huawei/ims/HwImsServiceImpl;->access$2000(Lcom/huawei/ims/HwImsServiceImpl;)Z\n\n"
+        "    move-result v3\n\n"
+        "    if-eqz v3, :cond_259\n\n"
+        "    .line 1468\n"
+        "    iget-object v3, v0, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->this$0:Lcom/huawei/ims/HwImsServiceImpl;\n\n"
+        "    invoke-static {v3}, Lcom/huawei/ims/HwImsServiceImpl;->access$1900(Lcom/huawei/ims/HwImsServiceImpl;)Landroid/telephony/ims/feature/MmTelFeature$MmTelCapabilities;\n\n"
+        "    move-result-object v3\n\n"
+        "    .line 1469\n"
+        "    const/4 v4, 0x1\n\n"
+        "    invoke-virtual {v3, v4}, Landroid/telephony/ims/feature/MmTelFeature$MmTelCapabilities;->addCapabilities(I)V\n\n"
+        "    .line 1470\n"
+        "    invoke-direct {v0, v15}, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->notifyImsVoWiFiState(Ljava/lang/String;)V\n\n"
+        "    .line 1472\n"
+        "    iget-object v3, v0, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->this$0:Lcom/huawei/ims/HwImsServiceImpl;\n\n"
+        "    const/4 v4, 0x0\n\n"
+        "    invoke-static {v3, v4}, Lcom/huawei/ims/HwImsServiceImpl;->access$1202(Lcom/huawei/ims/HwImsServiceImpl;I)I\n\n"
+        "    goto :goto_260",
+        "    :cond_210\n"
+        "    iget-object v3, v0, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->this$0:Lcom/huawei/ims/HwImsServiceImpl;\n\n"
+        "    invoke-static {v3}, Lcom/huawei/ims/HwImsServiceImpl;->access$1900(Lcom/huawei/ims/HwImsServiceImpl;)Landroid/telephony/ims/feature/MmTelFeature$MmTelCapabilities;\n\n"
+        "    move-result-object v3\n\n"
+        "    .line 1458\n"
+        "    const/4 v4, 0x1\n\n"
+        "    invoke-virtual {v3, v4}, Landroid/telephony/ims/feature/MmTelFeature$MmTelCapabilities;->addCapabilities(I)V\n\n"
+        "    .line 1460\n"
+        "    iget-object v3, v0, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->this$0:Lcom/huawei/ims/HwImsServiceImpl;\n\n"
+        "    invoke-static {v3, v4}, Lcom/huawei/ims/HwImsServiceImpl;->access$1202(Lcom/huawei/ims/HwImsServiceImpl;I)I\n\n"
+        "    invoke-static {v3}, Lcom/huawei/ims/HwImsServiceImpl;->access$1400(Lcom/huawei/ims/HwImsServiceImpl;)Landroid/telephony/ims/stub/ImsRegistrationImplBase;\n\n"
+        "    move-result-object v7\n\n"
+        "    invoke-virtual {v3}, Lcom/huawei/ims/HwImsServiceImpl;->getImsRegisterState()I\n\n"
+        "    move-result v10\n\n"
+        "    invoke-static {v7, v10, v4}, Lcom/huawei/ims/HwImsShim;->notifyRegistrationTechUpdate(Landroid/telephony/ims/stub/ImsRegistrationImplBase;II)V\n\n"
+        "    .line 1459\n"
+        '    const-string v3, "REGISTERED"\n\n'
+        "    invoke-direct {v0, v3}, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->notifyImsVoWiFiState(Ljava/lang/String;)V\n\n"
+        "    goto :goto_260\n\n"
+        "    .line 1462\n"
+        "    :cond_225\n"
+        "    const/4 v4, 0x1\n\n"
+        "    if-eqz v7, :cond_23b\n\n"
+        "    .line 1463\n"
+        "    iget-object v3, v0, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->this$0:Lcom/huawei/ims/HwImsServiceImpl;\n\n"
+        "    invoke-static {v3}, Lcom/huawei/ims/HwImsServiceImpl;->access$1900(Lcom/huawei/ims/HwImsServiceImpl;)Landroid/telephony/ims/feature/MmTelFeature$MmTelCapabilities;\n\n"
+        "    move-result-object v3\n\n"
+        "    .line 1464\n"
+        "    invoke-virtual {v3, v4}, Landroid/telephony/ims/feature/MmTelFeature$MmTelCapabilities;->addCapabilities(I)V\n\n"
+        "    .line 1466\n"
+        "    iget-object v3, v0, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->this$0:Lcom/huawei/ims/HwImsServiceImpl;\n\n"
+        "    const/4 v4, 0x0\n\n"
+        "    invoke-static {v3, v4}, Lcom/huawei/ims/HwImsServiceImpl;->access$1202(Lcom/huawei/ims/HwImsServiceImpl;I)I\n\n"
+        "    invoke-static {v3}, Lcom/huawei/ims/HwImsServiceImpl;->access$1400(Lcom/huawei/ims/HwImsServiceImpl;)Landroid/telephony/ims/stub/ImsRegistrationImplBase;\n\n"
+        "    move-result-object v7\n\n"
+        "    invoke-virtual {v3}, Lcom/huawei/ims/HwImsServiceImpl;->getImsRegisterState()I\n\n"
+        "    move-result v10\n\n"
+        "    invoke-static {v7, v10, v4}, Lcom/huawei/ims/HwImsShim;->notifyRegistrationTechUpdate(Landroid/telephony/ims/stub/ImsRegistrationImplBase;II)V\n\n"
+        "    .line 1465\n"
+        "    invoke-direct {v0, v15}, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->notifyImsVoWiFiState(Ljava/lang/String;)V\n\n"
+        "    goto :goto_260\n\n"
+        "    .line 1467\n"
+        "    :cond_23b\n"
+        "    if-eqz v12, :cond_259\n\n"
+        "    iget-object v3, v0, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->this$0:Lcom/huawei/ims/HwImsServiceImpl;\n\n"
+        "    invoke-static {v3}, Lcom/huawei/ims/HwImsServiceImpl;->access$2000(Lcom/huawei/ims/HwImsServiceImpl;)Z\n\n"
+        "    move-result v3\n\n"
+        "    if-eqz v3, :cond_259\n\n"
+        "    .line 1468\n"
+        "    iget-object v3, v0, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->this$0:Lcom/huawei/ims/HwImsServiceImpl;\n\n"
+        "    invoke-static {v3}, Lcom/huawei/ims/HwImsServiceImpl;->access$1900(Lcom/huawei/ims/HwImsServiceImpl;)Landroid/telephony/ims/feature/MmTelFeature$MmTelCapabilities;\n\n"
+        "    move-result-object v3\n\n"
+        "    .line 1469\n"
+        "    const/4 v4, 0x1\n\n"
+        "    invoke-virtual {v3, v4}, Landroid/telephony/ims/feature/MmTelFeature$MmTelCapabilities;->addCapabilities(I)V\n\n"
+        "    .line 1472\n"
+        "    iget-object v3, v0, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->this$0:Lcom/huawei/ims/HwImsServiceImpl;\n\n"
+        "    const/4 v4, 0x0\n\n"
+        "    invoke-static {v3, v4}, Lcom/huawei/ims/HwImsServiceImpl;->access$1202(Lcom/huawei/ims/HwImsServiceImpl;I)I\n\n"
+        "    invoke-static {v3}, Lcom/huawei/ims/HwImsServiceImpl;->access$1400(Lcom/huawei/ims/HwImsServiceImpl;)Landroid/telephony/ims/stub/ImsRegistrationImplBase;\n\n"
+        "    move-result-object v7\n\n"
+        "    invoke-virtual {v3}, Lcom/huawei/ims/HwImsServiceImpl;->getImsRegisterState()I\n\n"
+        "    move-result v10\n\n"
+        "    invoke-static {v7, v10, v4}, Lcom/huawei/ims/HwImsShim;->notifyRegistrationTechUpdate(Landroid/telephony/ims/stub/ImsRegistrationImplBase;II)V\n\n"
+        "    .line 1470\n"
+        "    invoke-direct {v0, v15}, Lcom/huawei/ims/HwImsServiceImpl$HwImsServiceImplHandler;->notifyImsVoWiFiState(Ljava/lang/String;)V\n\n"
+        "    goto :goto_260",
+        1,
+        "HwImsServiceImplHandler.handleSrvStatusUpdate_regTech_sync",
+    )
+    handler.write_text(htxt, encoding="utf-8")
 
     # 5. Patch HwImsUtImpl bridges.
     ut = smali_dir / "com/huawei/ims/HwImsUtImpl.smali"
@@ -729,6 +909,7 @@ def build_patched_hwims_apk(
         cold_cp = (
             f"{modlib / 'android.jar'}:"
             f"{modlib / 'framework-connectivity.jar'}:"
+            f"{modlib / 'framework-connectivity-t.jar'}:"
             f"{modlib / 'framework-wifi.jar'}"
         )
         stubs = sorted(str(p) for p in (shim_dir / "compile_stubs").rglob("*.java"))

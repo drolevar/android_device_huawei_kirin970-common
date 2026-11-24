@@ -763,6 +763,7 @@ def build_patched_mapcon_apk(
         cold_cp = (
             f"{modlib / 'android.jar'}:"
             f"{modlib / 'framework-connectivity.jar'}:"
+            f"{modlib / 'framework-connectivity-t.jar'}:"
             f"{modlib / 'framework-wifi.jar'}"
         )
         stubs = sorted(str(p) for p in (shim_dir / "compile_stubs").rglob("*.java"))
