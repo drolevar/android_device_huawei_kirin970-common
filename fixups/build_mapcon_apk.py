@@ -25,12 +25,12 @@ EXPECTED_INPUT_SHA256 = {
     "lib64/libc_secshared.so": "b534bb3e8ca226d169875b7027daec8606d9dd86d1a356498adb8fe7abfbd778",
 }
 
-EXPECTED_OUTPUT_SHA256 = "344750638179642bde395d981daa6bcd1bb005196df9d46bc081816ad20c4c0d"
+EXPECTED_OUTPUT_SHA256 = "d0ccbb874d813fdd5bd5b4b8859c7540fe8685fe293c85f2be4d68bf5e544713"
 
 EXPECTED_PATCHED_ENTRY_SHA256 = {
     "AndroidManifest.xml": "ee51d0d4e9b7a7cec6b598cfd37e40e6d4783292fe0cc583c627a63c7f3687a8",
-    "classes.dex": "caf055236922c7d3cf8aa6d69b1414bb1be9c6b0bba931fe3b1631f8bdb7a314",
-    "classes2.dex": "86556316a1083757c9c24814409e1ef904f1d47fefdc3e31ad7d21855df8e8ec",
+    "classes.dex": "b541be2bb938d513f7f4527991810e37b1473e13478ee10b8ff27c8b38c46e6d",
+    "classes2.dex": "4cf06517424f09da58567f7dc1c08325470e2fab9a8e208efbf5a4b4a82894e7",
     "lib/arm64-v8a/libc_secshared.so": "b534bb3e8ca226d169875b7027daec8606d9dd86d1a356498adb8fe7abfbd778",
     "lib/arm64-v8a/libvowifiqoe.so": "f570667ad5d91da5626ee64969567bec4ad93a50f7615a88be1263a057ed834c",
     "resources.arsc": "4962fe5de7b9b920dcc73366770d2f6e218d13c8a96df5a530287593ab60c469",
@@ -503,12 +503,33 @@ def apply_smali_patches(smali_dir: Path) -> None:
     tracker_w = smali_dir / "com/hisi/mapcon/adapter/w.smali"
     tracker_txt = _replace_exact(
         tracker_w.read_text(encoding="utf-8"),
+        "    invoke-static {}, Lcom/hisi/mapcon/common/d;->Z()Z\n\n"
+        "    move-result v1\n\n"
+        "    const/4 v2, 0x0\n\n"
+        "    if-eqz v1, :cond_14\n\n"
+        '    const-string v1, "android.telephony.extra.SLOT_INDEX"\n\n'
+        "    goto :goto_16\n\n"
+        "    :cond_14\n"
+        '    const-string v1, "phone"\n\n'
+        "    :goto_16\n"
+        "    invoke-virtual {p1, v1, v2}, Landroid/content/Intent;->getIntExtra(Ljava/lang/String;I)I\n\n"
+        "    move-result p1",
+        "    const/4 v2, 0x0\n\n"
+        "    const/4 v1, -0x1\n\n"
+        "    invoke-static {p1, v1}, Lcom/huawei/ims/shim/MapconShim;->extractSimSlotIndex(Landroid/content/Intent;I)I\n\n"
+        "    move-result p1",
+        1,
+        "adapter.w.carrierConfigExtractSimSlotIndex",
+    )
+    tracker_txt = _replace_exact(
+        tracker_txt,
         "    const/4 v2, 0x0\n\n"
         '    const-string v3, "phone"\n\n'
         "    invoke-virtual {p1, v3, v2}, Landroid/content/Intent;->getIntExtra(Ljava/lang/String;I)I\n\n"
         "    move-result p1",
         "    const/4 v2, 0x0\n\n"
-        "    invoke-static {p1, v2}, Lcom/huawei/ims/shim/MapconShim;->extractSimSlotIndex(Landroid/content/Intent;I)I\n\n"
+        "    const/4 v3, -0x1\n\n"
+        "    invoke-static {p1, v3}, Lcom/huawei/ims/shim/MapconShim;->extractSimSlotIndex(Landroid/content/Intent;I)I\n\n"
         "    move-result p1",
         1,
         "adapter.w.extractSimSlotIndex",

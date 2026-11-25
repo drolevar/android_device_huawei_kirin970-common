@@ -36,14 +36,14 @@ EXPECTED_INPUT_SHA256 = {
     "app/HwIms/lib/arm64/libvsc.so": "db0dbe9742ccc24fc397bb0945bc04d065de416cf10990cda8b096a87da9388f",
 }
 
-EXPECTED_OUTPUT_SHA256 = "d4223a1cacbbb17eb30d7a506b9a30849408dacc60d944dcccddefe8722be644"
+EXPECTED_OUTPUT_SHA256 = "edac8ba44ac387eba12593f2ea63b90505ee6c5be1e19bcacac3ee4f60f28448"
 
 EXPECTED_PATCHED_ENTRY_SHA256 = {
     "AndroidManifest.xml": "79607bc5f3e52a677d749a1f4cc169c7b24a50695813f35addd316f5d728a6a9",
     "assets/photo/photo_480_640.h264": "cccc9d13ea0b0558b088ddec22f3195b6300f0af273e7e5c5092cced4738f420",
     "assets/photo/photo_480_640.h265": "0bb0feb543db441dade1cd224972c11b6fd1917dfb5b6defbcf99574b5e4dc8c",
     "classes.dex": "16266aed9c7b84195aba5ca2f0d7347175fb7e9b12dd0ce7b7646bb723e5827c",
-    "classes2.dex": "82a6ce0ed466d29e4788fc2c005469a04c11521495bbd75ad15d9ef381d05231",
+    "classes2.dex": "8b2641613b5da55943e138ab5cfc638656a2fa63bf0259e957393c0c836a66e4",
     "lib/arm64-v8a/libcrypto_hwims.so": "37d18f74253c15c50ac87ba343e7f8659c24eee2915b7ea8c28dad8b20d21b23",
     "lib/arm64-v8a/libhw_media.so": "a79e784b0d68f0d1e6e431f69f2f002b1a09ddc8cbcb3ab79252e480bbae9c20",
     "lib/arm64-v8a/libhw_sys.so": "17b1d49aeae2c38d39bf7a8186c79de3facbadd5a750e6490b855825fda350d5",
