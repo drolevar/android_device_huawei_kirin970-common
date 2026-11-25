@@ -261,9 +261,12 @@ class Attempt22IdempotencyAndDualSourceTests(unittest.TestCase):
             if line.strip() and not line.lstrip().startswith("#")
         ]
         dsts = {f.dst for f in files}
-        self.assertEqual(len(files), 972)
+        # Attempt 26 retired 32/64-bit hicam.hal.service.so in favor of open-source shim (972 -> 970).
+        self.assertEqual(len(files), 970)
         self.assertNotIn("vendor/etc/audio_policy_volumes.xml", dsts)
         self.assertNotIn("vendor/etc/default_volume_tables.xml", dsts)
+        self.assertNotIn("vendor/lib/hw/hicam.hal.service.so", dsts)
+        self.assertNotIn("vendor/lib64/hw/hicam.hal.service.so", dsts)
         common_mk = (ROOT / "common.mk").read_text()
         self.assertIn("audio_policy_volumes.xml", common_mk)
         self.assertIn("default_volume_tables.xml", common_mk)
