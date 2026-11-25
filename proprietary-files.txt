@@ -44,7 +44,6 @@ vendor/bin/CameraDaemon|ce901f10bf7222acb28c063beee2f44dc0fadcc9|7a4a8c3b03f0852
 vendor/etc/init/vendor.huawei.hardware.camera.factory@1.1-service.rc|75cd57f6453167c2b5a692fb4139d50a09561604
 vendor/lib/hw/CameraFactoryService.so|b3489b2c29821434c4bccd096e55fa7c317e84c9
 vendor/lib/hw/hicam.hal.bz.so|b6dfb8e01516bc594ab2ef3a65afe9051e742f51|0af4c970864c8f7fc6ab710b04dd171d05bdc172
-vendor/lib/hw/hicam.hal.service.so|55609eed8323be4e6354ea7e73bd82d303130a1f
 vendor/lib/hw/vendor.huawei.hardware.camera.factory@1.0-impl.so|bdcca1f7f468e39240a4e02b8c9364f9b9ef17fe
 vendor/lib/hwcam/hwcam.ddt.so|4dae7b51580726b8a31f068c16c0b1623e833a50
 vendor/lib/hwcam/hwcam.services.so|d6b043f33d24fe5b1db966b0850810325a101767
@@ -89,7 +88,6 @@ vendor/lib/vendor.huawei.hardware.camera.factory@1.1.so|07f149958687126e1d2ebf36
 vendor/lib/vendor.huawei.hardware.camera.vircamera@1.0.so|b9cd124607d20fd472594509ac1e71b92780134e
 vendor/lib64/hw/CameraFactoryService.so|fd611ac8d717f11da37e4d912be0b740b7e050c9
 vendor/lib64/hw/hicam.hal.bz.so|ddec400af18687c33ea1c3b6fbd80407c46236f7|b66a2eca53a5e5dae355dd9e902cca410a562ab3
-vendor/lib64/hw/hicam.hal.service.so|82108b66da2db0882f926b683ca6d1f21dbcab93
 vendor/lib64/hw/vendor.huawei.hardware.camera.factory@1.0-impl.so|f2423d5cae4e6ce1726c16f3d106a6fd69f6885c
 vendor/lib64/hw/vendor.huawei.hardware.camera.factory@1.1-impl.so|b42f13ffc0b43635fd0a87913d6f1944d6c041ee
 vendor/lib64/hwcam/hwcam.ddt.so|e2ede61099a8cd11e82e9a2db729f66b3383d788
