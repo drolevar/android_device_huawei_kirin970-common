@@ -80,6 +80,7 @@ blob_fixups: blob_fixups_user_type = {
     'vendor/lib64/libSmartAE.so': blob_fixup()
         .patch_file('fixups/smartae.py', need_tmp_dir=False),
     (
+        'vendor/lib64/libAndroidNN.so',
         'vendor/lib64/libBestShot.so',
         'vendor/lib64/libDocBeauty.so',
         'vendor/lib64/libFNFD.so',
@@ -146,10 +147,18 @@ blob_fixups: blob_fixups_user_type = {
         'vendor/lib/hw/hicam.hal.bz.so',
         'vendor/lib/libcamera_perftrace.so',
         'vendor/lib64/hw/hicam.hal.bz.so',
+        'vendor/lib64/libai_framework.so',
+        'vendor/lib64/libai_hcs.so',
         'vendor/lib64/libcamera_perftrace.so',
     ): blob_fixup()
         .replace_needed('libtinyxml2.so', 'libtinyxml2-v29.so'),
-    'vendor/bin/iked': blob_fixup()
+    (
+        'vendor/bin/iked',
+        'vendor/lib64/libai_crypto.so',
+    ): blob_fixup()
+        .replace_needed('libcrypto.so', 'libcrypto-v29.so'),
+    'vendor/bin/hiaiserver': blob_fixup()
+        .replace_needed('libtinyxml2.so', 'libtinyxml2-v29.so')
         .replace_needed('libcrypto.so', 'libcrypto-v29.so'),
     'vendor/lib64/libracoon2.so': blob_fixup()
         .remove_needed('libssl.so')

@@ -261,9 +261,32 @@ class Attempt22IdempotencyAndDualSourceTests(unittest.TestCase):
             if line.strip() and not line.lstrip().startswith("#")
         ]
         dsts = {f.dst for f in files}
-        # Attempt 26 retired 32/64-bit hicam.hal.service.so (972 -> 970), then Stage A restored
-        # 17 stock .225 PPAlgo host DSP/OpenCL libraries (970 -> 987).
-        self.assertEqual(len(files), 987)
+        # Attempt 26 retired 32/64-bit hicam.hal.service.so (972 -> 970), Stage A restored
+        # 17 stock .225 PPAlgo host DSP/OpenCL libraries (970 -> 987), and Stage B restored
+        # 19 Kirin 970 NPU hiaiserver/HiAI/SceneRecognition entries (987 -> 1006).
+        self.assertEqual(len(files), 1006)
+        for hiai_entry in (
+            "vendor/bin/hiaiserver",
+            "vendor/etc/hiai/default/ai_computing_resource.xml",
+            "vendor/etc/hiai/default/ai_config.xml",
+            "vendor/etc/hiai/default/ai_framework.xml",
+            "vendor/etc/hiai/default/ai_server.properties",
+            "vendor/etc/models/SceneRecognition/caffe/build/IC_conv_112x112.cambricon",
+            "vendor/etc/models/SceneRecognition/caffe/build/IC_conv_112x112_front.cambricon",
+            "vendor/etc/models/SceneRecognition/caffe/build/IC_conv_112x112_front_mean",
+            "vendor/etc/models/SceneRecognition/caffe/build/IC_conv_112x112_mean",
+            "vendor/lib64/libAndroidNN.so",
+            "vendor/lib64/libai_crypto.so",
+            "vendor/lib64/libai_fmk_stats.so",
+            "vendor/lib64/libai_framework.so",
+            "vendor/lib64/libai_hcs.so",
+            "vendor/lib64/libgnustl_shared.so",
+            "vendor/lib64/libhiai_hcs.so",
+            "vendor/lib64/libhiai_hidl_server.so",
+            "vendor/lib64/libhiai_ipu.so",
+            "vendor/lib64/libhiai_server.so",
+        ):
+            self.assertIn(hiai_entry, dsts)
         for pp_lib in (
             "vendor/lib64/libCropOffset.so",
             "vendor/lib64/libaiq.so",
@@ -291,6 +314,12 @@ class Attempt22IdempotencyAndDualSourceTests(unittest.TestCase):
         common_mk = (ROOT / "common.mk").read_text()
         self.assertIn("audio_policy_volumes.xml", common_mk)
         self.assertIn("default_volume_tables.xml", common_mk)
+        for nn_pkg in (
+            "android.hardware.neuralnetworks@1.0.vendor",
+            "android.hardware.neuralnetworks@1.1.vendor",
+            "android.hardware.neuralnetworks@1.2.vendor",
+        ):
+            self.assertIn(nn_pkg, common_mk)
 
     def test_rc_fixups_are_strictly_idempotent(self):
         recipe = self._load("extract-files.py")

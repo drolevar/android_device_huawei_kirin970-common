@@ -281,7 +281,10 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.ipsec_tunnels.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.ipsec_tunnels.xml
 
 PRODUCT_PACKAGES += \
-    libcrypto-v29
+    libcrypto-v29 \
+    android.hardware.neuralnetworks@1.0.vendor \
+    android.hardware.neuralnetworks@1.1.vendor \
+    android.hardware.neuralnetworks@1.2.vendor
 
 # Inherit from the proprietary files makefile.
 $(call inherit-product, vendor/huawei/kirin970-common/kirin970-common-vendor.mk)
