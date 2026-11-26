@@ -261,8 +261,29 @@ class Attempt22IdempotencyAndDualSourceTests(unittest.TestCase):
             if line.strip() and not line.lstrip().startswith("#")
         ]
         dsts = {f.dst for f in files}
-        # Attempt 26 retired 32/64-bit hicam.hal.service.so in favor of open-source shim (972 -> 970).
-        self.assertEqual(len(files), 970)
+        # Attempt 26 retired 32/64-bit hicam.hal.service.so (972 -> 970), then Stage A restored
+        # 17 stock .225 PPAlgo host DSP/OpenCL libraries (970 -> 987).
+        self.assertEqual(len(files), 987)
+        for pp_lib in (
+            "vendor/lib64/libCropOffset.so",
+            "vendor/lib64/libaiq.so",
+            "vendor/lib64/libback_ground_adj.so",
+            "vendor/lib64/libcolorfusion.so",
+            "vendor/lib64/libcolorfusion_module.so",
+            "vendor/lib64/libdavinci_acore.so",
+            "vendor/lib64/libeis.so",
+            "vendor/lib64/libeis_cf.so",
+            "vendor/lib64/libhdr_acore.so",
+            "vendor/lib64/libhpf.so",
+            "vendor/lib64/libhpf_cl.so",
+            "vendor/lib64/libjpeghdr.so",
+            "vendor/lib64/libjpeghdr_acore.so",
+            "vendor/lib64/libjpeghdrenc.so",
+            "vendor/lib64/libmefdsp.so",
+            "vendor/lib64/libslf_cf.so",
+            "vendor/lib64/libtpp.so",
+        ):
+            self.assertIn(pp_lib, dsts)
         self.assertNotIn("vendor/etc/audio_policy_volumes.xml", dsts)
         self.assertNotIn("vendor/etc/default_volume_tables.xml", dsts)
         self.assertNotIn("vendor/lib/hw/hicam.hal.service.so", dsts)
