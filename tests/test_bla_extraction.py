@@ -518,6 +518,30 @@ class Attempt22IdempotencyAndDualSourceTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "bad zip"):
                     recipe.module.process_pinned_file(f, str(apk_path), restored=False)
 
+    def test_public_libraries_txt_exposes_only_libopencl_for_mali(self):
+        pub_libs = (ROOT / "configs/public.libraries.txt").read_text().splitlines()
+        entries = [line.strip() for line in pub_libs if line.strip() and not line.lstrip().startswith("#")]
+        self.assertEqual(entries, ["libOpenCL.so"])
+
+        common_mk = (ROOT / "common.mk").read_text()
+        self.assertIn(
+            "$(LOCAL_PATH)/configs/public.libraries.txt:$(TARGET_COPY_OUT_VENDOR)/etc/public.libraries.txt",
+            common_mk,
+        )
+
+        prop_srcs = {
+            File(line.strip()).src
+            for line in (ROOT / "proprietary-files.txt").read_text().splitlines()
+            if line.strip() and not line.lstrip().startswith("#")
+        }
+        for required in (
+            "vendor/lib/libOpenCL.so",
+            "vendor/lib64/libOpenCL.so",
+            "vendor/lib/egl/libGLES_mali.so",
+            "vendor/lib64/egl/libGLES_mali.so",
+        ):
+            self.assertIn(required, prop_srcs)
+
 
 if __name__ == "__main__":
     unittest.main()
